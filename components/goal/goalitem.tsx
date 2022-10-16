@@ -43,16 +43,19 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface StatsRingCardProps {
+  id: number;
   title: string;
   completed: number;
   total: number;
   list: {
+    id: number;
     label: string;
     isCompleted: boolean;
   }[];
 }
 
 export default function GoalItem({
+  id,
   title,
   completed,
   total,
@@ -112,7 +115,10 @@ export default function GoalItem({
               thickness={6}
               size={150}
               sections={[
-                { value: (completed / total) * 100, color: theme.primaryColor },
+                {
+                  value: total == 0 ? 0 : (completed / total) * 100,
+                  color: theme.primaryColor,
+                },
               ]}
               label={
                 <div>
@@ -122,7 +128,7 @@ export default function GoalItem({
                     className={classes.label}
                     sx={{ fontSize: 22 }}
                   >
-                    {((completed / total) * 100).toFixed(0)}%
+                    {total == 0 ? "0" : ((completed / total) * 100).toFixed(0)}%
                   </Text>
                   <Text align="center" size="xs" color="dimmed">
                     Completed
@@ -139,6 +145,7 @@ export default function GoalItem({
           opened={isShowGoalDetail}
           data={list}
           label={title}
+          id={id}
         />
       }
     </>

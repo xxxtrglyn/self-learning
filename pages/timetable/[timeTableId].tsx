@@ -30,7 +30,7 @@ const DUMMY = {
 const TimeTableDetail: NextPage = () => {
   const router = useRouter();
   return (
-    <MainLayout>
+    <MainLayout order={3}>
       <Grid
         style={{
           flex: 1,

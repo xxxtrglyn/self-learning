@@ -27,7 +27,7 @@ const DUMMY = {
 
 const TimeTable: NextPage = () => {
   return (
-    <MainLayout>
+    <MainLayout order={3}>
       <Grid
         m={0}
         p={20}

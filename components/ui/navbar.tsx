@@ -85,8 +85,8 @@ const mockdata = [
   { icon: IconSettings, label: "Settings" },
 ];
 
-export default function NavbarMinimal() {
-  const [active, setActive] = useState(2);
+const NavbarMinimal: React.FC<{ order: number }> = ({ order }) => {
+  const [active, setActive] = useState(order);
 
   const links = mockdata.map((link, index) => (
     <NavbarLink
@@ -115,4 +115,6 @@ export default function NavbarMinimal() {
       </Navbar.Section>
     </Navbar>
   );
-}
+};
+
+export default NavbarMinimal;

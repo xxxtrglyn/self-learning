@@ -16,7 +16,7 @@ const Goal: NextPage = () => {
 
   return (
     <>
-      <MainLayout>
+      <MainLayout order={1}>
         <GoalList />
         <AddButton>
           <IconCirclePlus

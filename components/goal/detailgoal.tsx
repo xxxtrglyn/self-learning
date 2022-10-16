@@ -8,15 +8,14 @@ import {
   Title,
 } from "@mantine/core";
 import {
-  IconCircleCheck,
   IconCircleDashed,
   IconEdit,
   IconCheck,
-  IconTrash,
   IconCirclePlus,
   IconX,
 } from "@tabler/icons";
 import React, { useState } from "react";
+import GoalLineItem from "./goallineitem";
 
 const useStyles = createStyles(() => ({
   edit: {
@@ -40,14 +39,35 @@ const useStyles = createStyles(() => ({
 }));
 
 const DetailGoal: React.FC<{
+  id: number;
   label: string;
   opened: boolean;
   onClose: () => void;
-  data: { label: string; isCompleted: boolean }[];
+  data: { id: number; label: string; isCompleted: boolean }[];
 }> = (props) => {
   const { classes } = useStyles();
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isAdding, setIsAdding] = useState<boolean>(false);
+  const [todoList, setTodoList] = useState<
+    { id: number; label: string; isCompleted: boolean }[]
+  >(props.data);
+
+  const updateSingleTodo = (todoItem: {
+    id: number;
+    label: string;
+    isCompleted: boolean;
+  }) => {
+    setTodoList((prevTodoList) => {
+      return prevTodoList.map((todo) => {
+        if (todo.id === todoItem.id) {
+          return { ...todoItem };
+        } else {
+          return { ...todo };
+        }
+      });
+    });
+  };
+
   const turnOnAdding = () => {
     setIsAdding(true);
   };
@@ -100,48 +120,16 @@ const DetailGoal: React.FC<{
         size="sm"
         center
         styles={{ itemWrapper: { width: "100%" } }}
-        icon={
-          <ThemeIcon color="teal" size={24} radius="xl">
-            <IconCircleCheck size={16} style={{ cursor: "pointer" }} />
-          </ThemeIcon>
-        }
       >
-        {props.data.map((item) => {
-          if (item.isCompleted) {
-            return (
-              <List.Item key={item.label} className={classes.line}>
-                {isEditing ? (
-                  <TextInput value={item.label} style={{ flex: 1 }} />
-                ) : (
-                  item.label
-                )}
-                {isEditing && (
-                  <IconTrash color="red" className={classes.delete} />
-                )}
-              </List.Item>
-            );
-          } else {
-            return (
-              <List.Item
-                key={item.label}
-                icon={
-                  <ThemeIcon color="blue" size={24} radius="xl">
-                    <IconCircleDashed size={16} />
-                  </ThemeIcon>
-                }
-              >
-                {isEditing ? (
-                  <TextInput value={item.label} style={{ flex: 1 }} />
-                ) : (
-                  item.label
-                )}
-                {isEditing && (
-                  <IconTrash color="red" className={classes.delete} />
-                )}
-              </List.Item>
-            );
-          }
-        })}
+        {props.data.map((item) => (
+          <GoalLineItem
+            parentId={props.id}
+            key={item.label}
+            isEditing={isEditing}
+            item={item}
+            onUpdate={updateSingleTodo}
+          />
+        ))}
         {isAdding && (
           <List.Item
             icon={
@@ -151,6 +139,7 @@ const DetailGoal: React.FC<{
             }
           >
             <TextInput style={{ flex: 1 }} />
+            <IconCheck color="green" className={classes.delete} />
             <IconX color="red" className={classes.delete} />
           </List.Item>
         )}

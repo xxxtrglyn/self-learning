@@ -1,25 +1,13 @@
 import { Grid } from "@mantine/core";
 import React from "react";
-import NavbarMinimal from "../components/ui/navbar";
 import styled from "@emotion/styled";
-import UserCardImage from "../components/ui/info";
-import StatsCard from "../components/ui/nextactivity";
-import StatsRing from "../components/ui/goals";
-import MainLayout from "../components/ui/mainlayout";
-
-const DUMMY_DATA = [
-  {
-    label: "Page views",
-    stats: "456,578",
-    progress: 65,
-    color: "teal",
-    icon: "up",
-  },
-];
+import UserCardImage from "../ui/info";
+import StatsCard from "../ui/nextactivity";
+import MainLayout from "../ui/mainlayout";
 
 const Dashboard = () => {
   return (
-    <MainLayout>
+    <MainLayout order={0}>
       <Grid style={{ flex: 1 }} m={0} p={0}>
         <Grid.Col span={12}>
           <UserCardImage
@@ -34,9 +22,7 @@ const Dashboard = () => {
         <Grid.Col span={4}>
           <StatsCard />
         </Grid.Col>
-        <Grid.Col span={4}>
-          <StatsRing data={DUMMY_DATA} />
-        </Grid.Col>
+        <Grid.Col span={4}></Grid.Col>
         <Grid.Col span={4}>
           <StatsCard />
         </Grid.Col>

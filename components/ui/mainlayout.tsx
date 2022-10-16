@@ -3,12 +3,13 @@ import NavbarMinimal from "./navbar";
 import styled from "@emotion/styled";
 type Props = {
   children?: React.ReactNode;
+  order: number;
 };
 
 const MainLayout: React.FC<Props> = (props) => {
   return (
     <Container>
-      <NavbarMinimal />
+      <NavbarMinimal order={props.order} />
       {props.children}
     </Container>
   );

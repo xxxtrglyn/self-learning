@@ -25,39 +25,22 @@ const useStyles = createStyles(() => ({
     },
   },
 }));
-const NoteItem = () => {
+const NoteItem: React.FC<{
+  values: { id: number; userId: number; content: string };
+  onSwitch: (data: string) => void;
+}> = ({ values, onSwitch }) => {
   const { classes } = useStyles();
+  const clickHandler = () => {
+    onSwitch(values.content);
+  };
   return (
     <>
-      <Card className={classes.card} mb="sm">
+      <Card className={classes.card} mb="sm" onClick={clickHandler}>
         <Text className={classes.date} size={10} weight={100}>
           Sep 14
         </Text>
         <Space h={7} />
-        <Text size={14}>
-          Đây là note dùng để lưu lại những note cần note lại, có thể lưu lại
-          hoặc không lưu lại :))
-        </Text>
-      </Card>
-      <Card className={classes.card} mb="sm">
-        <Text className={classes.date} size={10} weight={100}>
-          Sep 14
-        </Text>
-        <Space h={7} />
-        <Text size={14}>
-          Đây là note dùng để lưu lại những note cần note lại, có thể lưu lại
-          hoặc không lưu lại :))
-        </Text>
-      </Card>
-      <Card className={classes.card} mb="sm">
-        <Text className={classes.date} size={10} weight={100}>
-          Sep 14
-        </Text>
-        <Space h={7} />
-        <Text size={14}>
-          Đây là note dùng để lưu lại những note cần note lại, có thể lưu lại
-          hoặc không lưu lại :))
-        </Text>
+        <Text size={14}>{values.content}</Text>
       </Card>
     </>
   );
