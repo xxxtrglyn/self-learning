@@ -1,5 +1,5 @@
 import { createStyles, Container, Text, Button, Group } from "@mantine/core";
-import Login from "../login/login";
+import Login from "../login/authform";
 import { useState } from "react";
 
 const BREAKPOINT = "@media (max-width: 755px)";

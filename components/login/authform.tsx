@@ -11,28 +11,27 @@ import {
   Anchor,
   Stack,
   Modal,
-  Paper,
 } from "@mantine/core";
 import { FacebookButton, GoogleButton } from "./socialbutton";
 import React from "react";
-import { useDispatch } from "react-redux";
-import { authActions } from "../../store/auth-slice";
+import { signInWithCredential } from "../../store/auth-actions";
+import { useAppDispatch } from "../../store";
 
-const Login: React.FC<{
+const Auth: React.FC<{
   isOpened: boolean;
   onClose: () => void;
 }> = ({ isOpened, onClose }) => {
   const [type, toggle] = useToggle(["login", "register"]);
   const form = useForm({
     initialValues: {
-      email: "",
+      username: "",
       name: "",
       password: "",
       terms: true,
     },
 
     validate: {
-      email: (val) => (/^\S+@\S+$/.test(val) ? null : "Invalid email"),
+      username: (val) => (/^\S+\S+$/.test(val) ? null : "Invalid username"),
       password: (val) =>
         val.length <= 6
           ? "Password should include at least 6 characters"
@@ -40,7 +39,7 @@ const Login: React.FC<{
     },
   });
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   return (
     <Modal
@@ -66,14 +65,18 @@ const Login: React.FC<{
 
       <form
         onSubmit={form.onSubmit((values) => {
-          console.log("run");
-
-          if (
-            values.email === "xxxtrglyn@gmail.com" &&
-            values.password === "1234567"
-          ) {
-            dispatch(authActions.login());
-          }
+          dispatch(
+            signInWithCredential({
+              username: values.username,
+              password: values.password,
+            })
+          );
+          // if (
+          //   values.username === "xxxtrglyn@gmail.com" &&
+          //   values.password === "1234567"
+          // ) {
+          //   dispatch(authActions.login());
+          // }
         })}
       >
         <Stack>
@@ -91,12 +94,12 @@ const Login: React.FC<{
           <TextInput
             required
             label="Email"
-            placeholder="hello@mantine.dev"
-            value={form.values.email}
+            placeholder="xxxtrglyn"
+            value={form.values.username}
             onChange={(event) =>
-              form.setFieldValue("email", event.currentTarget.value)
+              form.setFieldValue("username", event.currentTarget.value)
             }
-            error={form.errors.email && "Invalid email"}
+            error={form.errors.username && "Invalid username"}
           />
 
           <PasswordInput
@@ -143,4 +146,4 @@ const Login: React.FC<{
   );
 };
 
-export default Login;
+export default Auth;
