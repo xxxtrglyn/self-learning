@@ -9,16 +9,20 @@ import {
 import React, { useRef } from "react";
 import { IconCheck, IconX } from "@tabler/icons";
 import { useAppDispatch } from "../../store";
-import { createNewGoal } from "../../store/goal-actions";
+import { createNewTimeTable } from "../../store/timetable-actions";
 
-const NewGoal: React.FC<{ opened: boolean; onClose: () => void }> = (props) => {
+const NewTimeTable: React.FC<{ opened: boolean; onClose: () => void }> = (
+  props
+) => {
   const dispatch = useAppDispatch();
   const textInputRef = useRef<HTMLInputElement>(null);
-  const addNewGoalHandler = async (event: React.MouseEvent<HTMLElement>) => {
+  const addNewTimeTableHandler = async (
+    event: React.MouseEvent<HTMLElement>
+  ) => {
     event.preventDefault();
     const enteredTitle = textInputRef.current?.value;
     if (enteredTitle != null) {
-      dispatch(createNewGoal({ title: enteredTitle }));
+      dispatch(createNewTimeTable(enteredTitle));
     }
     props.onClose();
   };
@@ -35,7 +39,7 @@ const NewGoal: React.FC<{ opened: boolean; onClose: () => void }> = (props) => {
       onClose={props.onClose}
     >
       <Title order={2} weight={100} align="center">
-        Add new goal
+        Add new TimeTable
       </Title>
       <Space h="md" />
       <TextInput placeholder="Enter title here" ref={textInputRef} />
@@ -46,7 +50,7 @@ const NewGoal: React.FC<{ opened: boolean; onClose: () => void }> = (props) => {
           size={30}
           radius="xl"
           style={{ cursor: "pointer" }}
-          onClick={addNewGoalHandler}
+          onClick={addNewTimeTableHandler}
         >
           <IconCheck size={20} />
         </ThemeIcon>
@@ -64,4 +68,4 @@ const NewGoal: React.FC<{ opened: boolean; onClose: () => void }> = (props) => {
   );
 };
 
-export default NewGoal;
+export default NewTimeTable;

@@ -14,12 +14,16 @@ import {
   IconCirclePlus,
   IconX,
 } from "@tabler/icons";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
+import { useAppDispatch } from "../../store";
+import { addNewTodo, updateGoal } from "../../store/goal-actions";
+import { Todo } from "../../types/todo";
 import GoalLineItem from "./goallineitem";
 
 const useStyles = createStyles(() => ({
   edit: {
     translate: 10,
+    transform: "translateY(3px)",
     cursor: "pointer",
   },
   delete: {
@@ -32,48 +36,27 @@ const useStyles = createStyles(() => ({
   },
   add: {
     position: "absolute",
-    bottom: 5,
-    right: 5,
+    bottom: 7,
+    right: 10,
     cursor: "pointer",
   },
 }));
 
 const DetailGoal: React.FC<{
-  id: number;
+  id: string;
   label: string;
+  list: Todo[];
   opened: boolean;
   onClose: () => void;
-  data: { id: number; label: string; isCompleted: boolean }[];
 }> = (props) => {
   const { classes } = useStyles();
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isAdding, setIsAdding] = useState<boolean>(false);
-  const [todoList, setTodoList] = useState<
-    { id: number; label: string; isCompleted: boolean }[]
-  >(props.data);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const dispatch = useAppDispatch();
 
-  const updateSingleTodo = (todoItem: {
-    id: number;
-    label: string;
-    isCompleted: boolean;
-  }) => {
-    setTodoList((prevTodoList) => {
-      return prevTodoList.map((todo) => {
-        if (todo.id === todoItem.id) {
-          return { ...todoItem };
-        } else {
-          return { ...todo };
-        }
-      });
-    });
-  };
+  const [tit, setTit] = useState<string>(props.label);
 
-  const turnOnAdding = () => {
-    setIsAdding(true);
-  };
-  const turnOffAdding = () => {
-    setIsAdding(false);
-  };
   const turnOnEditingHandler = () => {
     setIsEditing(true);
   };
@@ -82,9 +65,18 @@ const DetailGoal: React.FC<{
   };
   const closeHandler = () => {
     turnOffEditingHandler();
-    turnOffAdding();
+    setIsAdding(false);
     props.onClose();
   };
+
+  const addNewTodoHandler = () => {
+    const value = inputRef.current?.value;
+    if (value) {
+      dispatch(addNewTodo({ id: props.id!, label: value }));
+      setIsAdding(false);
+    }
+  };
+
   return (
     <Modal
       padding={40}
@@ -97,13 +89,29 @@ const DetailGoal: React.FC<{
       onClose={closeHandler}
     >
       <Title order={2} weight={100} align="center">
-        {props.label}
+        {!isEditing ? (
+          props.label
+        ) : (
+          <TextInput
+            style={{ display: "inline-block", width: "80%" }}
+            size="md"
+            onChange={(e) => {
+              setTit(e.target.value);
+            }}
+            value={tit}
+          />
+        )}
         {isEditing ? (
           <IconCheck
             color="teal"
             className={classes.edit}
             size={25}
-            onClick={turnOffEditingHandler}
+            onClick={() => {
+              if (props.label !== tit) {
+                dispatch(updateGoal({ id: props.id, title: tit }));
+              }
+              turnOffEditingHandler();
+            }}
           />
         ) : (
           <IconEdit
@@ -111,6 +119,7 @@ const DetailGoal: React.FC<{
             className={classes.edit}
             size={25}
             onClick={turnOnEditingHandler}
+            style={isAdding ? { display: "none" } : { display: "inline-block" }}
           />
         )}
       </Title>
@@ -121,13 +130,12 @@ const DetailGoal: React.FC<{
         center
         styles={{ itemWrapper: { width: "100%" } }}
       >
-        {props.data.map((item) => (
+        {props.list.map((item) => (
           <GoalLineItem
             parentId={props.id}
-            key={item.label}
+            key={item.id}
             isEditing={isEditing}
             item={item}
-            onUpdate={updateSingleTodo}
           />
         ))}
         {isAdding && (
@@ -138,18 +146,30 @@ const DetailGoal: React.FC<{
               </ThemeIcon>
             }
           >
-            <TextInput style={{ flex: 1 }} />
-            <IconCheck color="green" className={classes.delete} />
-            <IconX color="red" className={classes.delete} />
+            <TextInput style={{ flex: 1 }} ref={inputRef} />
+            <IconCheck
+              color="green"
+              className={classes.delete}
+              onClick={addNewTodoHandler}
+            />
+            <IconX
+              color="red"
+              className={classes.delete}
+              onClick={() => {
+                setIsAdding(false);
+              }}
+            />
           </List.Item>
         )}
       </List>
-      {isEditing && (
+      {!isEditing && (
         <IconCirclePlus
           className={classes.add}
-          size={30}
+          size={40}
           color="teal"
-          onClick={turnOnAdding}
+          onClick={() => {
+            setIsAdding(true);
+          }}
         />
       )}
     </Modal>

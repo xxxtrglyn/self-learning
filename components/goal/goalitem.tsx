@@ -1,5 +1,6 @@
 import { createStyles, Text, Card, RingProgress, Group } from "@mantine/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Todo } from "../../types/todo";
 import DetailGoal from "./detailgoal";
 
 const useStyles = createStyles((theme) => ({
@@ -8,11 +9,23 @@ const useStyles = createStyles((theme) => ({
       theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
     cursor: "pointer",
   },
-
+  cardInvalid: {
+    backgroundColor: "rgba(255,0,0,0.1)",
+    cursor: "pointer",
+  },
   label: {
     fontFamily: `Greycliff CF, ${theme.fontFamily}`,
     fontWeight: 700,
     lineHeight: 1,
+  },
+  label2: {
+    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+    fontWeight: 700,
+    lineHeight: 1,
+    maxWidth: "200px",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   },
 
   lead: {
@@ -43,25 +56,27 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface StatsRingCardProps {
-  id: number;
-  title: string;
-  completed: number;
-  total: number;
-  list: {
-    id: number;
-    label: string;
-    isCompleted: boolean;
-  }[];
+  id: string;
+  label: string;
+  list: Todo[];
+  deleteMode: boolean;
+  onAdd: (id: string) => void;
+  onRemove: (id: string) => void;
 }
 
 export default function GoalItem({
   id,
-  title,
-  completed,
-  total,
+  label,
   list,
+  deleteMode,
+  onAdd,
+  onRemove,
 }: StatsRingCardProps) {
   const { classes, theme } = useStyles();
+  const total = list.length;
+  const completed = list.filter((todo) => todo.isCompleted === true).length;
+
+  const [isSelected, setIsSelected] = useState<boolean>(false);
 
   const [isShowGoalDetail, setIsShownGoalDetail] = useState<boolean>(false);
   const showGoalDetailHandler = () => {
@@ -71,19 +86,34 @@ export default function GoalItem({
     setIsShownGoalDetail(false);
   };
 
+  const toggleSelectedHandler = () => {
+    setIsSelected((prev) => !prev);
+    if (!isSelected) {
+      onAdd(id);
+    } else {
+      onRemove(id);
+    }
+  };
+
+  useEffect(() => {
+    if (!deleteMode) {
+      setIsSelected(false);
+    }
+  }, [deleteMode]);
+
   return (
     <>
       <Card
         withBorder
         p="xl"
         radius="md"
-        className={classes.card}
-        onClick={showGoalDetailHandler}
+        className={isSelected ? classes.cardInvalid : classes.card}
+        onClick={deleteMode ? toggleSelectedHandler : showGoalDetailHandler}
       >
         <div className={classes.inner}>
           <div>
-            <Text size="xl" className={classes.label}>
-              {title}
+            <Text size="xl" className={classes.label2}>
+              {label}
             </Text>
             <div>
               <Text className={classes.lead} mt={30}>
@@ -143,9 +173,9 @@ export default function GoalItem({
         <DetailGoal
           onClose={hideGoalDetailHandler}
           opened={isShowGoalDetail}
-          data={list}
-          label={title}
           id={id}
+          label={label}
+          list={list}
         />
       }
     </>

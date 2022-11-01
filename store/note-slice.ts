@@ -1,36 +1,46 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { Note } from "../types/note";
+import { createOrUpdateNote, deleteNote } from "./note-actions";
 
-interface note {
-  id: number;
-  userId: string;
-  content: string;
-}
-
-const initialState = {
-  items: [
-    {
-      id: 1,
-      userId: 2,
-      content: "sasasasascccccccccc",
-    },
-    {
-      id: 2,
-      userId: 2,
-      content: "zzzzzzzzzzzzzzzzzzzzzzz",
-    },
-    {
-      id: 3,
-      userId: 2,
-      content: "ddddddddddddddddddddddddddd",
-    },
-  ],
-  total: 3,
+const initialState: { items: Note[]; totalQuantity: number } = {
+  items: [],
+  totalQuantity: 0,
 };
 
 const noteSlice = createSlice({
   name: "notelist",
   initialState: initialState,
-  reducers: {},
+  reducers: {
+    replaceNoteList(state, action: { type: string; payload: Note[] }) {
+      return { ...state, items: action.payload };
+    },
+  },
+  extraReducers(builder) {
+    builder.addCase(
+      createOrUpdateNote.fulfilled,
+      (state, action: { type: string; payload: Note }) => {
+        const index = state.items.findIndex(
+          (note) => note.id === action.payload.id
+        );
+        if (index >= 0) {
+          state.items[index] = action.payload;
+        } else {
+          state.items.push(action.payload);
+        }
+      }
+    );
+    builder.addCase(
+      deleteNote.fulfilled,
+      (state, action: { type: string; payload: Note }) => {
+        return {
+          ...state,
+          items: [...state.items].filter(
+            (note) => note.id !== action.payload.id
+          ),
+        };
+      }
+    );
+  },
 });
 
 export const noteAction = noteSlice.actions;

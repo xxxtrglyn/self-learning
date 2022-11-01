@@ -8,9 +8,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
   const data = req.body;
 
-  const { username, password } = data;
+  const { email, password } = data;
 
-  if (!username || !password || password.trim().length < 7) {
+  if (!email || !password || password.trim().length < 7) {
     res.status(422).json({
       message:
         "Invalid input - password should also be at least 7 characters long.",
@@ -19,7 +19,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   const existingUser = await prisma.user.findUnique({
-    where: { username: username },
+    where: { email: email },
   });
 
   if (existingUser) {
@@ -31,7 +31,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   const result = await prisma.user.create({
     data: {
-      username: username,
+      email: email,
       password: hashedPassword,
     },
   });

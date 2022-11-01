@@ -20,6 +20,7 @@ import {
   IconSwitchHorizontal,
 } from "@tabler/icons";
 import { MantineLogo } from "@mantine/ds";
+import { useRouter } from "next/router";
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -77,23 +78,41 @@ function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
 
 const mockdata = [
   { icon: IconHome2, label: "Home" },
-  { icon: IconGauge, label: "Dashboard" },
+  { icon: IconGauge, label: "Goals" },
   { icon: IconDeviceDesktopAnalytics, label: "Analytics" },
-  { icon: IconCalendarStats, label: "Releases" },
+  { icon: IconCalendarStats, label: "Timetable" },
   { icon: IconUser, label: "Account" },
-  { icon: IconFingerprint, label: "Security" },
-  { icon: IconSettings, label: "Settings" },
+  { icon: IconFingerprint, label: "Note" },
+  { icon: IconSettings, label: "Setting" },
 ];
 
 const NavbarMinimal: React.FC<{ order: number }> = ({ order }) => {
   const [active, setActive] = useState(order);
+  const router = useRouter();
 
   const links = mockdata.map((link, index) => (
     <NavbarLink
       {...link}
       key={link.label}
       active={index === active}
-      onClick={() => setActive(index)}
+      onClick={() => {
+        setActive(index);
+        if (link.label === "Home") {
+          router.replace("/");
+        }
+        if (link.label === "Analytics") {
+          router.replace("/analytics");
+        }
+        if (link.label === "Goals") {
+          router.replace("/goals");
+        }
+        if (link.label === "Note") {
+          router.replace("/notes");
+        }
+        if (link.label === "Timetable") {
+          router.replace("/timetables");
+        }
+      }}
     />
   ));
 

@@ -1,102 +1,100 @@
+import { Goal } from "../types/goal";
 import { createSlice } from "@reduxjs/toolkit";
-import Goal from "../models/goal";
+import {
+  addNewTodo,
+  createNewGoal,
+  deleteGoal,
+  deleteGoalTodo,
+  updateGoal,
+  updateGoalTodo,
+} from "./goal-actions";
+import { Todo } from "../types/todo";
+
+let emptyGoal: Goal[] = [];
 
 const initialState = {
-  items: [
-    {
-      id: 1,
-      title: "Learn React 2",
-      completed: 30,
-      total: 100,
-      list: [
-        {
-          id: 5,
-          label: "Do this",
-          isCompleted: true,
-        },
-        {
-          id: 6,
-          label: "Do that",
-          isCompleted: false,
-        },
-      ],
-    },
-    {
-      id: 2,
-      title: "Learn Next",
-      completed: 25,
-      total: 56,
-      list: [
-        {
-          id: 7,
-          label: "Do this",
-          isCompleted: true,
-        },
-        {
-          id: 8,
-          label: "Do that",
-          isCompleted: false,
-        },
-      ],
-    },
-    {
-      id: 3,
-      title: "Learn Node",
-      completed: 31,
-      total: 98,
-      list: [
-        {
-          id: 9,
-          label: "Do this",
-          isCompleted: true,
-        },
-        {
-          id: 10,
-          label: "Do that that",
-          isCompleted: true,
-        },
-      ],
-    },
-  ],
-  totalQuantity: 3,
+  items: emptyGoal,
+  totalQuantity: 0,
 };
 
 const goalSlice = createSlice({
   name: "goallist",
   initialState: initialState,
   reducers: {
-    addNewGoalToList(state, action) {
-      const newGoal = new Goal(action.payload);
-      state.items.push(newGoal);
+    replaceGoalList(state, action: { type: string; payload: Goal[] }) {
+      state.items = action.payload;
     },
-    updateGoalTodo(
-      state,
-      action: {
-        type: string;
-        payload: {
-          id: number;
-          goal: { id: number; label: string; isCompleted: boolean };
-        };
-      }
-    ) {
+  },
+  extraReducers(builder) {
+    builder.addCase(createNewGoal.fulfilled, (state, action) => {
+      state.items.push({
+        id: action.payload.id,
+        userId: action.payload.userId,
+        createdAt: action.payload.createdAt,
+        updatedAt: action.payload.updateAt,
+        list: [],
+        label: action.payload.title,
+      });
+    });
+    builder.addCase(deleteGoal.fulfilled, (state, action) => {
       return {
         ...state,
-        items: [...state.items].map((goal) => {
-          if (goal.id === action.payload.id) {
-            const tmp = goal.list.map((item) => {
-              if (item.id === action.payload.goal.id) {
-                return { ...action.payload.goal };
-              } else {
-                return { ...item };
-              }
-            });
-            return { ...goal, list: [...tmp] };
-          } else {
-            return { ...goal };
-          }
+        items: [...state.items].filter((goal) => {
+          return !action.payload?.find((id) => {
+            return goal.id === id;
+          });
         }),
       };
-    },
+    });
+    builder.addCase(
+      addNewTodo.fulfilled,
+      (state, action: { type: string; payload: Todo }) => {
+        const index = state.items.findIndex(
+          (goal) => goal.id === action.payload.goalId
+        );
+        state.items[index].list.push(action.payload);
+      }
+    );
+    builder.addCase(
+      updateGoalTodo.fulfilled,
+      (state, action: { type: string; payload: Todo }) => {
+        const indexGoal = state.items.findIndex(
+          (goal) => goal.id === action.payload.goalId
+        );
+        const indexTodo = state.items[indexGoal].list.findIndex(
+          (todo) => todo.id === action.payload.id
+        );
+        state.items[indexGoal].list[indexTodo] = action.payload;
+      }
+    );
+    builder.addCase(
+      deleteGoalTodo.fulfilled,
+      (state, action: { type: string; payload: Todo }) => {
+        const indexGoal = state.items.findIndex(
+          (goal) => goal.id === action.payload.goalId
+        );
+        const newList = state.items[indexGoal].list.filter(
+          (todo) => todo.id !== action.payload.id
+        );
+        const newItems = state.items.map((goal, index) => {
+          if (index === indexGoal) {
+            return { ...goal, list: newList };
+          }
+          return goal;
+        });
+        return { ...state, items: newItems };
+      }
+    );
+    builder.addCase(updateGoal.fulfilled, (state, action) => {
+      const newItems = [...state.items].map((goal) => {
+        if (goal.id === action.payload.id) {
+          return { ...goal, label: action.payload.title };
+        }
+        return goal;
+      });
+      console.log(newItems);
+      return { ...state, items: newItems };
+    });
   },
 });
 

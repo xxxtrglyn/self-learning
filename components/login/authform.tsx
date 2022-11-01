@@ -14,7 +14,10 @@ import {
 } from "@mantine/core";
 import { FacebookButton, GoogleButton } from "./socialbutton";
 import React from "react";
-import { signInWithCredential } from "../../store/auth-actions";
+import {
+  signInWithCredential,
+  signUpwithCredentical,
+} from "../../store/auth-actions";
 import { useAppDispatch } from "../../store";
 
 const Auth: React.FC<{
@@ -24,14 +27,14 @@ const Auth: React.FC<{
   const [type, toggle] = useToggle(["login", "register"]);
   const form = useForm({
     initialValues: {
-      username: "",
+      email: "",
       name: "",
       password: "",
       terms: true,
     },
 
     validate: {
-      username: (val) => (/^\S+\S+$/.test(val) ? null : "Invalid username"),
+      email: (val) => (/^\S+@\S+$/.test(val) ? null : "Invalid email"),
       password: (val) =>
         val.length <= 6
           ? "Password should include at least 6 characters"
@@ -65,18 +68,22 @@ const Auth: React.FC<{
 
       <form
         onSubmit={form.onSubmit((values) => {
-          dispatch(
-            signInWithCredential({
-              username: values.username,
-              password: values.password,
-            })
-          );
-          // if (
-          //   values.username === "xxxtrglyn@gmail.com" &&
-          //   values.password === "1234567"
-          // ) {
-          //   dispatch(authActions.login());
-          // }
+          if (type === "login") {
+            dispatch(
+              signInWithCredential({
+                email: values.email,
+                password: values.password,
+              })
+            );
+          } else {
+            dispatch(
+              signUpwithCredentical({
+                email: values.email,
+                password: values.password,
+                fullname: values.name,
+              })
+            );
+          }
         })}
       >
         <Stack>
@@ -93,13 +100,13 @@ const Auth: React.FC<{
 
           <TextInput
             required
-            label="Email"
+            label="email"
             placeholder="xxxtrglyn"
-            value={form.values.username}
+            value={form.values.email}
             onChange={(event) =>
-              form.setFieldValue("username", event.currentTarget.value)
+              form.setFieldValue("email", event.currentTarget.value)
             }
-            error={form.errors.username && "Invalid username"}
+            error={form.errors.email && "Invalid email"}
           />
 
           <PasswordInput

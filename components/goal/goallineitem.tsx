@@ -6,9 +6,10 @@ import {
   IconPencil,
   IconCheck,
   IconCircleCheck,
+  IconX,
 } from "@tabler/icons";
-import { useDispatch } from "react-redux";
-import { goalActions } from "../../store/goal-slice";
+import { useAppDispatch } from "../../store";
+import { deleteGoalTodo, updateGoalTodo } from "../../store/goal-actions";
 
 const useStyles = createStyles(() => ({
   edit: {
@@ -31,15 +32,10 @@ const useStyles = createStyles(() => ({
   },
 }));
 const GoalLineItem: React.FC<{
-  parentId: number;
-  onUpdate: (todoItem: {
-    id: number;
-    label: string;
-    isCompleted: boolean;
-  }) => void;
-  item: { id: number; label: string; isCompleted: boolean };
+  parentId: string;
+  item: { id: string; label: string; isCompleted: boolean };
   isEditing: boolean;
-}> = ({ parentId, item, isEditing, onUpdate }) => {
+}> = ({ parentId, item, isEditing }) => {
   const { classes } = useStyles();
   const [textInput, setTextInput] = useState<string>(item.label);
   const textChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,17 +47,18 @@ const GoalLineItem: React.FC<{
   };
 
   const turnOffEditHandler = () => {
-    onUpdate({ id: item.id, label: textInput, isCompleted: item.isCompleted });
     setIsEdit(false);
   };
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const checkToggleHandler = () => {
     dispatch(
-      goalActions.updateGoalTodo({
-        id: parentId,
-        goal: { ...item, isCompleted: !item.isCompleted },
+      updateGoalTodo({
+        id: item.id,
+        goalId: parentId,
+        label: item.label,
+        isCompleted: !item.isCompleted,
       })
     );
   };
@@ -103,10 +100,37 @@ const GoalLineItem: React.FC<{
           <IconCheck
             color="green"
             className={classes.delete}
+            onClick={() => {
+              if (textInput) {
+                dispatch(
+                  updateGoalTodo({
+                    id: item.id,
+                    goalId: parentId,
+                    label: textInput,
+                    isCompleted: item.isCompleted,
+                  })
+                );
+              }
+              turnOffEditHandler();
+            }}
+          />
+        )}
+        {isEditing && isEdit && (
+          <IconX
+            color="red"
+            className={classes.delete}
             onClick={turnOffEditHandler}
           />
         )}
-        {isEditing && <IconTrash color="red" className={classes.delete} />}
+        {isEditing && !isEdit && (
+          <IconTrash
+            color="red"
+            className={classes.delete}
+            onClick={() => {
+              dispatch(deleteGoalTodo(item.id));
+            }}
+          />
+        )}
       </List.Item>
     );
   } else {
@@ -143,10 +167,37 @@ const GoalLineItem: React.FC<{
           <IconCheck
             color="green"
             className={classes.delete}
+            onClick={() => {
+              if (textInput) {
+                dispatch(
+                  updateGoalTodo({
+                    id: item.id,
+                    goalId: parentId,
+                    label: textInput,
+                    isCompleted: item.isCompleted,
+                  })
+                );
+                turnOffEditHandler();
+              }
+            }}
+          />
+        )}
+        {isEditing && isEdit && (
+          <IconX
+            color="red"
+            className={classes.delete}
             onClick={turnOffEditHandler}
           />
         )}
-        {isEditing && <IconTrash color="red" className={classes.delete} />}
+        {isEditing && !isEdit && (
+          <IconTrash
+            color="red"
+            className={classes.delete}
+            onClick={() => {
+              dispatch(deleteGoalTodo(item.id));
+            }}
+          />
+        )}
       </List.Item>
     );
   }

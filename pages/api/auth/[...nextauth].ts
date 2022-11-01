@@ -1,30 +1,32 @@
 import { NextApiHandler } from "next";
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "../../../lib/prisma";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { verifyPassword } from "../../../lib/auth";
-import type { User } from "@prisma/client";
 
 const authHandler: NextApiHandler = (req, res) => NextAuth(req, res, options);
 export default authHandler;
 
-const options = {
+export const options: NextAuthOptions = {
+  session: {
+    strategy: "jwt",
+    maxAge: 3000000,
+  },
   providers: [
     CredentialsProvider({
       name: "Credentials",
 
       credentials: {
-        username: { label: "Username", type: "text", placeholder: "jsmith" },
+        email: { label: "email", type: "text", placeholder: "jsmith" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
         const user = await prisma.user.findUnique({
           where: {
-            username: credentials?.username,
+            email: credentials?.email,
           },
         });
-        console.log(user);
 
         if (user) {
           const isValid = await verifyPassword(
@@ -32,8 +34,6 @@ const options = {
             user.password
           );
           if (isValid) {
-            console.log("ok");
-
             return user;
           } else {
             throw new Error("Your password is incorrect");

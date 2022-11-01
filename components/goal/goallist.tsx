@@ -1,19 +1,63 @@
-import { Grid } from "@mantine/core";
-import React from "react";
+import { Button, Grid, Text } from "@mantine/core";
+import React, { useEffect, useState } from "react";
 import GoalItem from "./goalitem";
 import { useSelector } from "react-redux";
-import type { RootState } from "../../store";
+import { RootState, useAppDispatch } from "../../store";
+import { Goal } from "../../types/goal";
+import { deleteGoal } from "../../store/goal-actions";
 
-const GoalList = () => {
+const GoalList: React.FC<{ deleteMode: boolean }> = ({ deleteMode }) => {
   const data = useSelector((state: RootState) => state.goal.items);
+  const [selectedItem, setSelectedItem] = useState<Goal[]>([]);
+  const dispatch = useAppDispatch();
+
+  const addToSelectedList = (id: string) => {
+    const selected = data.find((item) => item.id === id);
+    setSelectedItem((prevList) => {
+      return prevList.concat(selected!);
+    });
+  };
+
+  const removeFromSelectedList = (id: string) => {
+    setSelectedItem((prevList) => {
+      return prevList.filter((goal) => goal.id !== id);
+    });
+  };
+
+  const deleteHandler = async () => {
+    const ids = selectedItem.reduce((arr: string[], cur) => {
+      return arr.concat(cur.id);
+    }, []);
+    await dispatch(deleteGoal(ids));
+    setSelectedItem([]);
+  };
+  useEffect(() => {
+    if (!deleteMode) {
+      setSelectedItem([]);
+    }
+  }, [deleteMode]);
 
   const list = data.map((item) => (
-    <Grid.Col span={4} key={item.title}>
-      <GoalItem {...item} />
+    <Grid.Col span={4} key={item.id}>
+      <GoalItem
+        {...item}
+        deleteMode={deleteMode}
+        onAdd={addToSelectedList}
+        onRemove={removeFromSelectedList}
+      />
     </Grid.Col>
   ));
   return (
     <Grid m={0} p={0} style={{ flex: 1 }}>
+      {deleteMode && (
+        <Grid.Col span={12} style={{ backgroundColor: "white" }}>
+          <Text>
+            Select these GOALS you want to DELETE and click DELETE BUTTON,{" "}
+            <Text color="red">{selectedItem.length}</Text>
+            <Button onClick={deleteHandler}>Delete</Button>
+          </Text>
+        </Grid.Col>
+      )}
       {list}
     </Grid>
   );

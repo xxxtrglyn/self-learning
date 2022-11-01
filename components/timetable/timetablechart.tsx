@@ -1,5 +1,7 @@
 import { RingProgress, Text, Group } from "@mantine/core";
 import React from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store";
 
 const COLOR = [
   "#00FF7F",
@@ -24,16 +26,19 @@ const COLOR = [
 ];
 
 const TimeTableChart: React.FC<{
-  data: {
-    title: string;
-    data: { title: string; time: string; info: string }[];
-  };
-}> = (props) => {
-  const sectionData = props.data.data.map((item, index) => {
+  id: string;
+}> = ({ id }) => {
+  const data = useSelector((state: RootState) =>
+    state.timetable.items.find((item) => item.id === id)
+  );
+
+  const defaultData = [{ value: 100, color: "#f1f3f5", tooltip: "nothing" }];
+
+  const sectionData = data?.timelines.map((item, index) => {
     return {
       value: 20,
       color: COLOR[index],
-      tooltip: item.time,
+      tooltip: item.startAt,
     };
   });
   return (
@@ -43,10 +48,10 @@ const TimeTableChart: React.FC<{
         thickness={25}
         label={
           <Text size="xs" align="center" px="xs" sx={{ pointerEvents: "none" }}>
-            {props.data.title}
+            {data?.title}
           </Text>
         }
-        sections={sectionData}
+        sections={sectionData ? sectionData : defaultData}
       />
     </Group>
   );

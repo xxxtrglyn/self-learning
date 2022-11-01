@@ -4,12 +4,14 @@ import authSlice from "./auth-slice";
 
 import goalSlice from "./goal-slice";
 import noteSlice from "./note-slice";
+import timeTableSlice from "./timetable-slice";
 
 const store = configureStore({
   reducer: {
     goal: goalSlice.reducer,
     auth: authSlice.reducer,
     note: noteSlice.reducer,
+    timetable: timeTableSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
