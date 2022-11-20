@@ -18,17 +18,58 @@ model User {
   password      String
   avatar        String?
   dob           DateTime?
+  phone         Int?
+  quotes        String?
+  city          String?
+  job           String?
   createdAt     DateTime  @default(now()) @map(name: "created_at")
   updatedAt     DateTime  @updatedAt @map(name: "updated_at")
 
-  notes      Note[]
-  goals      Goal[]
-  documents  Document[]
-  timetables TimeTable[]
-  accounts   Account[]
-  sessions   Session[]
+  notes       Note[]
+  goals       Goal[]
+  documents   Document[]
+  timetables  TimeTable[]
+  accounts    Account[]
+  sessions    Session[]
+  joinedRooms JoinedRoom[]
+  messages    MessageLine[]
 
   @@map(name: "users")
+}
+
+model MessageLine {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  room      Room     @relation(fields: [roomId], references: [id])
+  roomId    String
+  content   String
+  createdAt DateTime @default(now()) @map(name: "created_at")
+}
+
+model JoinedRoom {
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  room      Room     @relation(fields: [roomId], references: [id])
+  roomId    String
+  isActived Boolean?
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @updatedAt @map(name: "updated_at")
+
+  @@id([userId, roomId])
+}
+
+model Room {
+  id         String   @id @default(cuid())
+  roomName   String
+  totalUser  Int
+  coverImage String?
+  admin      String
+  createdAt  DateTime @default(now()) @map(name: "created_at")
+  updatedAt  DateTime @updatedAt @map(name: "updated_at")
+
+  joinsRoom JoinedRoom[]
+  messages  MessageLine[]
 }
 
 model Session {
@@ -86,12 +127,13 @@ model Timeline {
   id          String    @id @default(cuid())
   timetable   TimeTable @relation(fields: [timeTableId], references: [id])
   timeTableId String
-  startAt     DateTime  @map(name: "start_at")
-  endAt       DateTime  @map(name: "end_at")
+  startAt     DateTime? @map(name: "start_at")
+  endAt       DateTime? @map(name: "end_at")
   createdAt   DateTime  @default(now()) @map(name: "created_at")
   moreDetail  String?   @map(name: "more_detail")
   updatedAt   DateTime  @updatedAt @map(name: "updated_at")
 
+  @@unique([startAt, timeTableId])
   @@map(name: "timelines")
 }
 

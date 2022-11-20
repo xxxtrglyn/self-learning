@@ -1,5 +1,5 @@
 import { createStyles, Container, Text, Button, Group } from "@mantine/core";
-import Login from "../login/authform";
+import Login from "../auth/authform";
 import { useState } from "react";
 
 const BREAKPOINT = "@media (max-width: 755px)";
@@ -91,9 +91,9 @@ export default function HeroTitle() {
               gradient={{ from: "blue", to: "cyan" }}
               inherit
             >
-              fully featured
+              Self-Learning
             </Text>{" "}
-            React components and hooks library
+            Website
           </h1>
 
           <Text className={classes.description} color="dimmed">

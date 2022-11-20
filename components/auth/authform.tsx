@@ -11,6 +11,7 @@ import {
   Anchor,
   Stack,
   Modal,
+  LoadingOverlay,
 } from "@mantine/core";
 import { FacebookButton, GoogleButton } from "./socialbutton";
 import React from "react";
@@ -18,7 +19,8 @@ import {
   signInWithCredential,
   signUpwithCredentical,
 } from "../../store/auth-actions";
-import { useAppDispatch } from "../../store";
+import { RootState, useAppDispatch } from "../../store";
+import { useSelector } from "react-redux";
 
 const Auth: React.FC<{
   isOpened: boolean;
@@ -43,6 +45,7 @@ const Auth: React.FC<{
   });
 
   const dispatch = useAppDispatch();
+  const isLoading = useSelector((state: RootState) => state.ui.loaderOverlay);
 
   return (
     <Modal
@@ -55,8 +58,9 @@ const Auth: React.FC<{
       closeOnClickOutside={true}
       onClose={onClose}
     >
+      <LoadingOverlay visible={isLoading} overlayBlur={2} />
       <Text size="lg" weight={500}>
-        Welcome to Mantine, {type} with
+        Welcome to Self-Learning, {type} with
       </Text>
 
       <Group grow mb="md" mt="md">
@@ -100,8 +104,9 @@ const Auth: React.FC<{
 
           <TextInput
             required
-            label="email"
-            placeholder="xxxtrglyn"
+            label="Email"
+            type="email"
+            placeholder="Your email"
             value={form.values.email}
             onChange={(event) =>
               form.setFieldValue("email", event.currentTarget.value)

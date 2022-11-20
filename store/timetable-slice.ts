@@ -1,6 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { Timeline } from "../types/timeline";
 import { Timetable } from "../types/timetable";
-import { createNewTimeTable } from "./timetable-actions";
+import {
+  createNewTimeLine,
+  createNewTimeTable,
+  deleteTimetable,
+} from "./timetable-actions";
 
 const initialState: { items: Timetable[]; totalQuantity: number } = {
   items: [],
@@ -28,7 +33,25 @@ const timeTableSlice = createSlice({
         timelines: [],
         title: action.payload.title,
       });
-      console.log(state.items.length);
+    });
+    builder.addCase(
+      createNewTimeLine.fulfilled,
+      (state, action: { type: string; payload: Timeline }) => {
+        const index = state.items.findIndex(
+          (item) => item.id === action.payload.timeTableId
+        );
+        state.items[index].timelines.push(action.payload);
+      }
+    );
+    builder.addCase(deleteTimetable.fulfilled, (state, action) => {
+      return {
+        ...state,
+        items: [...state.items].filter((timetable) => {
+          return !action.payload?.find((id) => {
+            return timetable.id === id;
+          });
+        }),
+      };
     });
   },
 });

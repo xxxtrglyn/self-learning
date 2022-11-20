@@ -31,31 +31,4 @@ export default async function handler(
       return;
     }
   }
-
-  // if (req.method === "PATCH") {
-  //   const data: {
-  //     id: string;
-  //     goalId: string;
-  //     label: string;
-  //     isCompleted: boolean;
-  //   } = req.body;
-  //   if (!data.label) {
-  //     res.status(400).json({ message: "Invalid label" });
-  //     return;
-  //   }
-
-  //   const result = await prisma.todo.update({
-  //     where: {
-  //       id: data.id,
-  //     },
-  //     data: {
-  //       label: data.label,
-  //       isCompleted: data.isCompleted,
-  //     },
-  //   });
-
-  //   if (result) {
-  //     res.status(200).json(result);
-  //   }
-  // }
 }

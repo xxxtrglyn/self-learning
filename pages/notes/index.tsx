@@ -36,6 +36,8 @@ const Note: NextPage<{ allNotes: Note[] }> = ({ allNotes }) => {
   const [newNotes, setNewNotes] = useState<Note[]>([]);
   const [value, setValue] = useState<string | undefined>(undefined);
   const [selectedId, setSelectedId] = useState<string>();
+  const [filterId, setFilterId] = useState<string[]>([]);
+  const [searchInput, setSearchInput] = useState<string>("");
   const { classes } = useStyles();
 
   const totalNotes = notes.concat(newNotes);
@@ -71,8 +73,8 @@ const Note: NextPage<{ allNotes: Note[] }> = ({ allNotes }) => {
         id: `samplenoteid${prevNotes.length}`,
         content: "",
         userId: "",
-        createdAt: Date.now().toLocaleString(),
-        updatedAt: Date.now().toLocaleString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       });
     });
     setSelectedId(`samplenoteid${newNotes.length}`);
@@ -86,11 +88,13 @@ const Note: NextPage<{ allNotes: Note[] }> = ({ allNotes }) => {
             <Title order={3} weight={500} style={{ display: "inline-block" }}>
               Sticky Notes
             </Title>
-            <IconPlus
-              size={27}
-              style={{ cursor: "pointer" }}
-              onClick={addNewSampleNoteHandler}
-            />
+            {searchInput === "" && (
+              <IconPlus
+                size={27}
+                style={{ cursor: "pointer" }}
+                onClick={addNewSampleNoteHandler}
+              />
+            )}
           </Group>
           <Space h="xs" />
           <TextInput
@@ -100,17 +104,36 @@ const Note: NextPage<{ allNotes: Note[] }> = ({ allNotes }) => {
                 <IconSearch size={16} />
               </ThemeIcon>
             }
+            value={searchInput}
+            onChange={(event) => {
+              setSearchInput(event.currentTarget.value);
+              setFilterId(
+                totalNotes
+                  .filter((note) =>
+                    note.content.includes(event.currentTarget.value)
+                  )
+                  .map((note) => note.id)
+              );
+            }}
           />
           <Space h="xs" />
-          {totalNotes.map((item) => (
-            <NoteItem
-              key={item.id}
-              values={item}
-              onSwitch={switchHandler}
-              onCreateOrUpdate={createOrUpdateHandler}
-              isSelected={selectedId === item.id}
-            />
-          ))}
+          {totalNotes
+            .filter((note) => {
+              if (searchInput === "") {
+                return true;
+              } else {
+                return filterId.findIndex((id) => id === note.id) > -1;
+              }
+            })
+            .map((item) => (
+              <NoteItem
+                key={item.id}
+                values={item}
+                onSwitch={switchHandler}
+                onCreateOrUpdate={createOrUpdateHandler}
+                isSelected={selectedId === item.id}
+              />
+            ))}
         </Grid.Col>
         <Grid.Col span={9}>
           <RichTextEditor
@@ -125,8 +148,6 @@ const Note: NextPage<{ allNotes: Note[] }> = ({ allNotes }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  console.log("run again");
-
   const token = await getToken({ req: context.req });
   if (!token) {
     return {

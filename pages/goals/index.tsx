@@ -31,14 +31,21 @@ const Goal: NextPage<{ allGoals: Goal[] }> = (props) => {
   return (
     <>
       <MainLayout order={1}>
-        <GoalList deleteMode={isDeleteMode} />
-        <AddButton>
-          <IconCirclePlus
-            size={60}
-            color="green"
-            onClick={showAddGoalFormHandler}
-          />
-        </AddButton>
+        <GoalList
+          deleteMode={isDeleteMode}
+          onCloseDeleteMode={() => {
+            setIsDeleteMode(false);
+          }}
+        />
+        {!isDeleteMode ? (
+          <AddButton>
+            <IconCirclePlus
+              size={60}
+              color="green"
+              onClick={showAddGoalFormHandler}
+            />
+          </AddButton>
+        ) : null}
         <DeleteButton>
           <IconCircleMinus
             size={60}

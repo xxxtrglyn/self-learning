@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { signInWithCredential } from "./auth-actions";
+import { logout, signInWithCredential } from "./auth-actions";
 
 const initialState = { isLogin: false };
 
@@ -12,8 +12,16 @@ const authSlice = createSlice({
     },
   },
   extraReducers(builder) {
-    builder.addCase(signInWithCredential.fulfilled, (state, action) => {
-      state.isLogin = true;
+    builder.addCase(
+      signInWithCredential.fulfilled,
+      (state, action: { type: string; payload: boolean }) => {
+        if (action.payload) {
+          state.isLogin = true;
+        }
+      }
+    );
+    builder.addCase(logout.fulfilled, (state) => {
+      state.isLogin = false;
     });
   },
 });

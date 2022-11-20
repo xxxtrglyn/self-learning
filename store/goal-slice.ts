@@ -27,11 +27,13 @@ const goalSlice = createSlice({
   },
   extraReducers(builder) {
     builder.addCase(createNewGoal.fulfilled, (state, action) => {
+      console.log("success", action.payload);
+
       state.items.push({
         id: action.payload.id,
         userId: action.payload.userId,
         createdAt: action.payload.createdAt,
-        updatedAt: action.payload.updateAt,
+        updatedAt: action.payload.updatedAt,
         list: [],
         label: action.payload.title,
       });

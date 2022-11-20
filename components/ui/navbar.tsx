@@ -12,15 +12,17 @@ import {
   IconHome2,
   IconGauge,
   IconDeviceDesktopAnalytics,
-  IconFingerprint,
   IconCalendarStats,
   IconUser,
-  IconSettings,
+  IconHourglass,
   IconLogout,
   IconSwitchHorizontal,
+  IconNote,
 } from "@tabler/icons";
 import { MantineLogo } from "@mantine/ds";
 import { useRouter } from "next/router";
+import { useAppDispatch } from "../../store";
+import { logout } from "../../store/auth-actions";
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -79,16 +81,17 @@ function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
 const mockdata = [
   { icon: IconHome2, label: "Home" },
   { icon: IconGauge, label: "Goals" },
-  { icon: IconDeviceDesktopAnalytics, label: "Analytics" },
+  { icon: IconDeviceDesktopAnalytics, label: "Study Room" },
   { icon: IconCalendarStats, label: "Timetable" },
-  { icon: IconUser, label: "Account" },
-  { icon: IconFingerprint, label: "Note" },
-  { icon: IconSettings, label: "Setting" },
+  { icon: IconUser, label: "Profile" },
+  { icon: IconNote, label: "Note" },
+  { icon: IconHourglass, label: "Setting" },
 ];
 
 const NavbarMinimal: React.FC<{ order: number }> = ({ order }) => {
   const [active, setActive] = useState(order);
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
   const links = mockdata.map((link, index) => (
     <NavbarLink
@@ -112,6 +115,12 @@ const NavbarMinimal: React.FC<{ order: number }> = ({ order }) => {
         if (link.label === "Timetable") {
           router.replace("/timetables");
         }
+        if (link.label === "Profile") {
+          router.replace("/profile");
+        }
+        if (link.label === "Study Room") {
+          router.replace("/studyroom");
+        }
       }}
     />
   ));
@@ -129,7 +138,13 @@ const NavbarMinimal: React.FC<{ order: number }> = ({ order }) => {
       <Navbar.Section>
         <Stack justify="center" spacing={0}>
           <NavbarLink icon={IconSwitchHorizontal} label="Change account" />
-          <NavbarLink icon={IconLogout} label="Logout" />
+          <NavbarLink
+            icon={IconLogout}
+            label="Logout"
+            onClick={() => {
+              dispatch(logout());
+            }}
+          />
         </Stack>
       </Navbar.Section>
     </Navbar>

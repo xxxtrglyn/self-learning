@@ -2,14 +2,16 @@ import {
   createStyles,
   List,
   Modal,
-  Space,
   TextInput,
   ThemeIcon,
   Title,
+  Stack,
+  Group,
+  Button,
 } from "@mantine/core";
 import {
   IconCircleDashed,
-  IconEdit,
+  IconSettings,
   IconCheck,
   IconCirclePlus,
   IconX,
@@ -35,9 +37,6 @@ const useStyles = createStyles(() => ({
     position: "relative",
   },
   add: {
-    position: "absolute",
-    bottom: 7,
-    right: 10,
     cursor: "pointer",
   },
 }));
@@ -78,101 +77,130 @@ const DetailGoal: React.FC<{
   };
 
   return (
-    <Modal
-      padding={40}
-      opened={props.opened}
-      withCloseButton={false}
-      transition="fade"
-      transitionDuration={600}
-      transitionTimingFunction="ease"
-      closeOnClickOutside={true}
-      onClose={closeHandler}
-    >
-      <Title order={2} weight={100} align="center">
-        {!isEditing ? (
-          props.label
-        ) : (
-          <TextInput
-            style={{ display: "inline-block", width: "80%" }}
-            size="md"
-            onChange={(e) => {
-              setTit(e.target.value);
-            }}
-            value={tit}
-          />
-        )}
-        {isEditing ? (
-          <IconCheck
-            color="teal"
-            className={classes.edit}
-            size={25}
-            onClick={() => {
-              if (props.label !== tit) {
-                dispatch(updateGoal({ id: props.id, title: tit }));
-              }
-              turnOffEditingHandler();
-            }}
-          />
-        ) : (
-          <IconEdit
-            color="red"
-            className={classes.edit}
-            size={25}
-            onClick={turnOnEditingHandler}
-            style={isAdding ? { display: "none" } : { display: "inline-block" }}
-          />
-        )}
-      </Title>
-      <Space h="lg" />
-      <List
-        spacing="xs"
-        size="sm"
-        center
-        styles={{ itemWrapper: { width: "100%" } }}
+    <>
+      <Modal
+        opened={props.opened}
+        withCloseButton={true}
+        transition="fade"
+        transitionDuration={600}
+        transitionTimingFunction="ease"
+        closeOnClickOutside={false}
+        onClose={closeHandler}
       >
-        {props.list.map((item) => (
-          <GoalLineItem
-            parentId={props.id}
-            key={item.id}
-            isEditing={isEditing}
-            item={item}
-          />
-        ))}
-        {isAdding && (
-          <List.Item
-            icon={
-              <ThemeIcon color="blue" size={24} radius="xl">
-                <IconCircleDashed size={16} />
+        <Stack>
+          <Title order={2} weight={100} align="center">
+            {!isEditing ? (
+              props.label
+            ) : (
+              <TextInput
+                style={{ display: "inline-block", width: "80%" }}
+                size="md"
+                onChange={(e) => {
+                  setTit(e.target.value);
+                }}
+                value={tit}
+              />
+            )}
+            {isEditing ? (
+              <ThemeIcon
+                radius="xl"
+                size={27}
+                color="teal"
+                className={classes.edit}
+                onClick={() => {
+                  if (props.label !== tit) {
+                    dispatch(updateGoal({ id: props.id, title: tit }));
+                  }
+                  turnOffEditingHandler();
+                }}
+              >
+                <IconCheck />
               </ThemeIcon>
-            }
+            ) : (
+              <ThemeIcon
+                radius="xl"
+                className={classes.edit}
+                size={28}
+                onClick={turnOnEditingHandler}
+                color="dark"
+              >
+                <IconSettings color="white" />
+              </ThemeIcon>
+            )}
+          </Title>
+          <List
+            spacing="xs"
+            size="sm"
+            center
+            styles={{ itemWrapper: { width: "100%" } }}
           >
-            <TextInput style={{ flex: 1 }} ref={inputRef} />
-            <IconCheck
-              color="green"
-              className={classes.delete}
-              onClick={addNewTodoHandler}
-            />
-            <IconX
-              color="red"
-              className={classes.delete}
-              onClick={() => {
-                setIsAdding(false);
-              }}
-            />
-          </List.Item>
-        )}
-      </List>
-      {!isEditing && (
-        <IconCirclePlus
-          className={classes.add}
-          size={40}
-          color="teal"
-          onClick={() => {
-            setIsAdding(true);
-          }}
-        />
-      )}
-    </Modal>
+            {props.list.map((item) => (
+              <GoalLineItem
+                parentId={props.id}
+                key={item.id}
+                isEditing={isEditing}
+                item={item}
+              />
+            ))}
+            {isAdding && (
+              <List.Item
+                icon={
+                  <ThemeIcon color="blue" size={24} radius="xl">
+                    <IconCircleDashed size={16} />
+                  </ThemeIcon>
+                }
+              >
+                <TextInput style={{ flex: 1 }} ref={inputRef} />
+                <ThemeIcon
+                  style={{ marginLeft: "10px" }}
+                  radius="xl"
+                  size={27}
+                  color="teal"
+                  className={classes.delete}
+                  onClick={addNewTodoHandler}
+                >
+                  <IconCheck />
+                </ThemeIcon>
+
+                <ThemeIcon
+                  style={{ marginLeft: "10px" }}
+                  radius="xl"
+                  size={27}
+                  color="red"
+                  className={classes.delete}
+                  onClick={() => {
+                    setIsAdding(false);
+                  }}
+                >
+                  <IconX />
+                </ThemeIcon>
+              </List.Item>
+            )}
+          </List>
+          {!isEditing && (
+            <Group position="center">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setIsAdding(true);
+                }}
+                leftIcon={<IconCirclePlus />}
+              >
+                Add
+              </Button>
+              {/* <IconCirclePlus
+                className={classes.add}
+                size={40}
+                color="teal"
+                onClick={() => {
+                  setIsAdding(true);
+                }}
+              /> */}
+            </Group>
+          )}
+        </Stack>
+      </Modal>
+    </>
   );
 };
 

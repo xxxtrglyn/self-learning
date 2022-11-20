@@ -4,7 +4,9 @@ import authSlice from "./auth-slice";
 
 import goalSlice from "./goal-slice";
 import noteSlice from "./note-slice";
+import roomSlice from "./room-slice";
 import timeTableSlice from "./timetable-slice";
+import uiSlice, { uiActions } from "./ui-slice";
 
 const store = configureStore({
   reducer: {
@@ -12,6 +14,8 @@ const store = configureStore({
     auth: authSlice.reducer,
     note: noteSlice.reducer,
     timetable: timeTableSlice.reducer,
+    room: roomSlice.reducer,
+    ui: uiSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -5,6 +5,8 @@ import { Provider } from "react-redux";
 import store from "../store";
 import { SessionProvider } from "next-auth/react";
 import { Session } from "next-auth";
+import { NotificationsProvider } from "@mantine/notifications";
+import { ModalsProvider } from "@mantine/modals";
 
 function MyApp({ Component, pageProps }: AppProps<{ session: Session }>) {
   return (
@@ -17,9 +19,13 @@ function MyApp({ Component, pageProps }: AppProps<{ session: Session }>) {
           colorScheme: "light",
         }}
       >
-        <Provider store={store}>
-          <Component {...pageProps} />
-        </Provider>
+        <ModalsProvider>
+          <NotificationsProvider autoClose={5000}>
+            <Provider store={store}>
+              <Component {...pageProps} />
+            </Provider>
+          </NotificationsProvider>
+        </ModalsProvider>
       </MantineProvider>
     </SessionProvider>
   );

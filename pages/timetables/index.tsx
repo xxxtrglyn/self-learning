@@ -1,18 +1,19 @@
 import styled from "@emotion/styled";
-import { Button, Card, Grid } from "@mantine/core";
+import { Button, Center, Text, Grid } from "@mantine/core";
 import { GetServerSideProps, NextPage } from "next";
 import React, { useEffect, useState } from "react";
-import TimeTableChart from "../../components/timetable/timetablechart";
 import MainLayout from "../../components/ui/mainlayout";
 import { IconCirclePlus, IconCircleMinus } from "@tabler/icons";
 import { getToken } from "next-auth/jwt";
 import prisma from "../../lib/prisma";
 import { Timetable } from "../../types/timetable";
 import { Timeline } from "../../types/timeline";
-import { useAppDispatch } from "../../store";
+import { RootState, useAppDispatch } from "../../store";
 import { timeTableAction } from "../../store/timetable-slice";
 import NewTimeTable from "../../components/timetable/newtimetable";
-import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
+import TimeTableItem from "../../components/timetable/timetableitem";
+import { deleteTimetable } from "../../store/timetable-actions";
 
 const TimeTable: NextPage<{ allTimetables: Timetable[] }> = ({
   allTimetables,
@@ -22,7 +23,38 @@ const TimeTable: NextPage<{ allTimetables: Timetable[] }> = ({
     dispatch(timeTableAction.replaceTimeTableList(allTimetables));
   }, [dispatch, allTimetables]);
 
+  const timetables = useSelector((state: RootState) => state.timetable.items);
   const [isShowNewForm, setIsShowNewForm] = useState<boolean>(false);
+  const [isDeleteMode, setIsDeleteMode] = useState<boolean>(false);
+  const [selectedItem, setSelectedItem] = useState<Timetable[]>([]);
+
+  const addToSelectedList = (id: string) => {
+    const selected = timetables.find((item) => item.id === id);
+    setSelectedItem((prevList) => {
+      return prevList.concat(selected!);
+    });
+  };
+
+  const removeFromSelectedList = (id: string) => {
+    setSelectedItem((prevList) => {
+      return prevList.filter((goal) => goal.id !== id);
+    });
+  };
+
+  const deleteHandler = async () => {
+    const ids = selectedItem.reduce((arr: string[], cur) => {
+      return arr.concat(cur.id);
+    }, []);
+    await dispatch(deleteTimetable(ids));
+    setSelectedItem([]);
+  };
+
+  useEffect(() => {
+    if (!isDeleteMode) {
+      setSelectedItem([]);
+    }
+  }, [isDeleteMode]);
+
   const showNewFormHandler = () => {
     setIsShowNewForm(true);
   };
@@ -30,7 +62,6 @@ const TimeTable: NextPage<{ allTimetables: Timetable[] }> = ({
     setIsShowNewForm(false);
   };
 
-  const router = useRouter();
   return (
     <>
       <MainLayout order={3}>
@@ -42,32 +73,57 @@ const TimeTable: NextPage<{ allTimetables: Timetable[] }> = ({
             textAlign: "center",
           }}
         >
-          {allTimetables?.map((timetable) => (
-            <Grid.Col key={timetable.id} span={4}>
-              <Card
-                shadow="sm"
-                p="lg"
-                radius="md"
-                withBorder
-                style={{ cursor: "pointer" }}
-                onClick={() => {
-                  router.push(`timetables/${timetable.id}`);
-                }}
-              >
-                <TimeTableChart id={timetable.id} />
-                <Button>Set as default</Button>
-              </Card>
+          {isDeleteMode && (
+            <Grid.Col
+              span={12}
+              style={{ backgroundColor: "white", borderRadius: "8px" }}
+            >
+              <Center>
+                <Text>
+                  Select these TIMETABLES you want to DELETE and click DELETE
+                  BUTTON,{" "}
+                  <Text color="red" style={{ display: "inline" }}>
+                    {selectedItem.length}
+                  </Text>
+                  <Text style={{ display: "inline" }}>
+                    {" "}
+                    selected TIMETABLES
+                  </Text>
+                  <Button
+                    style={{ display: "block", margin: "0 auto" }}
+                    color="red"
+                    onClick={deleteHandler}
+                  >
+                    Delete
+                  </Button>
+                </Text>
+              </Center>
             </Grid.Col>
+          )}
+          {timetables.map((timetable) => (
+            <TimeTableItem
+              key={timetable.id}
+              value={timetable}
+              onAdd={addToSelectedList}
+              onRemove={removeFromSelectedList}
+              isDeleteMode={isDeleteMode}
+            />
           ))}
         </Grid>
-        <AddButton>
-          <IconCirclePlus
-            size={60}
-            color="green"
-            onClick={showNewFormHandler}
-          />
-        </AddButton>
-        <DeleteButton>
+        {!isDeleteMode ? (
+          <AddButton>
+            <IconCirclePlus
+              size={60}
+              color="green"
+              onClick={showNewFormHandler}
+            />
+          </AddButton>
+        ) : null}
+        <DeleteButton
+          onClick={() => {
+            setIsDeleteMode((prevMode) => !prevMode);
+          }}
+        >
           <IconCircleMinus size={60} color="red" />
         </DeleteButton>
       </MainLayout>
@@ -106,8 +162,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const transformTimeline: Timeline[] = timeline.map((item) => ({
     id: item.id,
     timeTableId: item.timeTableId,
-    startAt: item.startAt.toISOString(),
-    endAt: item.endAt.toISOString(),
+    startAt: item.startAt!.toISOString(),
+    endAt: item.endAt!.toISOString(),
     moreDetail: item.moreDetail,
   }));
 

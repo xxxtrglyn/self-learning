@@ -1,66 +1,74 @@
 import {
-  Group,
+  Stack,
   Modal,
-  Space,
   TextInput,
-  ThemeIcon,
   Title,
+  Button,
+  LoadingOverlay,
 } from "@mantine/core";
-import React, { useRef } from "react";
-import { IconCheck, IconX } from "@tabler/icons";
-import { useAppDispatch } from "../../store";
+import React, { useEffect } from "react";
+import { RootState, useAppDispatch } from "../../store";
 import { createNewGoal } from "../../store/goal-actions";
+import { useForm } from "@mantine/form";
+import { useSelector } from "react-redux";
+import { showNotification } from "@mantine/notifications";
 
 const NewGoal: React.FC<{ opened: boolean; onClose: () => void }> = (props) => {
   const dispatch = useAppDispatch();
-  const textInputRef = useRef<HTMLInputElement>(null);
-  const addNewGoalHandler = async (event: React.MouseEvent<HTMLElement>) => {
-    event.preventDefault();
-    const enteredTitle = textInputRef.current?.value;
-    if (enteredTitle != null) {
-      dispatch(createNewGoal({ title: enteredTitle }));
-    }
-    props.onClose();
-  };
+  const form = useForm({
+    validateInputOnChange: true,
+    initialValues: {
+      title: "",
+    },
+    validate: {
+      title: (value) =>
+        value.length < 2 ? "Title must have at least 2 letters" : null,
+    },
+  });
+
+  const loading = useSelector((state: RootState) => state.ui.loaderOverlay);
 
   return (
-    <Modal
-      padding={20}
-      opened={props.opened}
-      withCloseButton={false}
-      transition="fade"
-      transitionDuration={600}
-      transitionTimingFunction="ease"
-      closeOnClickOutside={true}
-      onClose={props.onClose}
-    >
-      <Title order={2} weight={100} align="center">
-        Add new goal
-      </Title>
-      <Space h="md" />
-      <TextInput placeholder="Enter title here" ref={textInputRef} />
-      <Space h="md" />
-      <Group position="center">
-        <ThemeIcon
-          color="lime"
-          size={30}
-          radius="xl"
-          style={{ cursor: "pointer" }}
-          onClick={addNewGoalHandler}
+    <>
+      <Modal
+        padding={20}
+        opened={props.opened}
+        transition="fade"
+        transitionDuration={600}
+        transitionTimingFunction="ease"
+        closeOnClickOutside={false}
+        onClose={props.onClose}
+      >
+        <form
+          onSubmit={form.onSubmit((values) => {
+            dispatch(createNewGoal({ title: values.title }));
+            form.reset();
+          })}
         >
-          <IconCheck size={20} />
-        </ThemeIcon>
-        <ThemeIcon
-          color="red"
-          size={30}
-          radius="xl"
-          style={{ cursor: "pointer" }}
-          onClick={props.onClose}
-        >
-          <IconX size={20} />
-        </ThemeIcon>
-      </Group>
-    </Modal>
+          <Stack>
+            <Title order={2} weight={100} align="center">
+              Add new goal
+            </Title>
+            <TextInput
+              label="Title"
+              placeholder="Enter title here"
+              value={form.values.title}
+              onChange={(event) => {
+                form.setFieldValue("title", event.currentTarget.value);
+              }}
+            />
+            {loading ? (
+              <Button disabled>Posting</Button>
+            ) : (
+              <Button disabled={!form.isValid()} type="submit">
+                Post
+              </Button>
+            )}
+          </Stack>
+        </form>
+        <LoadingOverlay visible={loading} overlayBlur={0} />
+      </Modal>
+    </>
   );
 };
 

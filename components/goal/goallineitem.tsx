@@ -1,5 +1,13 @@
-import React, { useState } from "react";
-import { createStyles, List, Text, TextInput, ThemeIcon } from "@mantine/core";
+import React, { useEffect, useState } from "react";
+import {
+  ActionIcon,
+  createStyles,
+  Group,
+  List,
+  Text,
+  TextInput,
+  ThemeIcon,
+} from "@mantine/core";
 import {
   IconCircleDashed,
   IconTrash,
@@ -10,6 +18,7 @@ import {
 } from "@tabler/icons";
 import { useAppDispatch } from "../../store";
 import { deleteGoalTodo, updateGoalTodo } from "../../store/goal-actions";
+import { useForm } from "@mantine/form";
 
 const useStyles = createStyles(() => ({
   edit: {
@@ -18,7 +27,6 @@ const useStyles = createStyles(() => ({
   },
   delete: {
     position: "relative",
-    right: -5,
     cursor: "pointer",
   },
   line: {
@@ -38,9 +46,26 @@ const GoalLineItem: React.FC<{
 }> = ({ parentId, item, isEditing }) => {
   const { classes } = useStyles();
   const [textInput, setTextInput] = useState<string>(item.label);
+  const form = useForm({
+    initialValues: {
+      label: item.label ? item.label : "",
+    },
+    validate: {
+      label: (value) =>
+        value.length < 2 ? "Label should have least 2 characters" : null,
+    },
+  });
+
   const textChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTextInput(event.target.value);
   };
+
+  useEffect(() => {
+    if (isEditing === false) {
+      setIsEdit(false);
+    }
+  }, [isEditing]);
+
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const turnOnEditHandler = () => {
     setIsEdit(true);
@@ -80,57 +105,83 @@ const GoalLineItem: React.FC<{
           </ThemeIcon>
         }
       >
-        {isEdit ? (
-          <TextInput
-            value={textInput}
-            style={{ flex: 1 }}
-            onChange={textChangeHandler}
-          />
-        ) : (
-          <Text style={{ flex: 1 }}>{item.label}</Text>
-        )}
-        {isEditing && !isEdit && (
-          <IconPencil
-            color="violet"
-            className={classes.delete}
-            onClick={turnOnEditHandler}
-          />
-        )}
-        {isEditing && isEdit && (
-          <IconCheck
-            color="green"
-            className={classes.delete}
-            onClick={() => {
-              if (textInput) {
-                dispatch(
-                  updateGoalTodo({
-                    id: item.id,
-                    goalId: parentId,
-                    label: textInput,
-                    isCompleted: item.isCompleted,
-                  })
-                );
-              }
-              turnOffEditHandler();
-            }}
-          />
-        )}
-        {isEditing && isEdit && (
-          <IconX
-            color="red"
-            className={classes.delete}
-            onClick={turnOffEditHandler}
-          />
-        )}
-        {isEditing && !isEdit && (
-          <IconTrash
-            color="red"
-            className={classes.delete}
-            onClick={() => {
-              dispatch(deleteGoalTodo(item.id));
-            }}
-          />
-        )}
+        <form
+          style={{ width: "100%" }}
+          onSubmit={form.onSubmit((values) => {
+            console.log("submit 1");
+
+            dispatch(
+              updateGoalTodo({
+                id: item.id,
+                goalId: parentId,
+                label: values.label,
+                isCompleted: item.isCompleted,
+              })
+            );
+            turnOffEditHandler();
+          })}
+        >
+          <Group>
+            {isEditing && isEdit ? (
+              <TextInput
+                value={form.values.label}
+                style={{ flex: 1 }}
+                onChange={(event) => {
+                  form.setFieldValue("label", event.currentTarget.value);
+                }}
+                error={form.errors.label}
+              />
+            ) : (
+              <Text style={{ flex: 1 }}>{item.label}</Text>
+            )}
+            <Group>
+              {isEditing && !isEdit && (
+                <ThemeIcon size={27} radius="xl" color="yellow">
+                  <IconPencil
+                    className={classes.delete}
+                    onClick={turnOnEditHandler}
+                  />
+                </ThemeIcon>
+              )}
+              {isEditing && !isEdit && (
+                <ThemeIcon
+                  style={{ cursor: "pointer" }}
+                  size={27}
+                  radius="xl"
+                  color="cyan"
+                  onClick={() => {
+                    dispatch(deleteGoalTodo(item.id));
+                  }}
+                >
+                  <IconTrash />
+                </ThemeIcon>
+              )}
+            </Group>
+            <Group>
+              {isEditing && isEdit && (
+                <ActionIcon type="submit">
+                  <ThemeIcon
+                    radius="xl"
+                    color="green"
+                    className={classes.delete}
+                  >
+                    <IconCheck />
+                  </ThemeIcon>
+                </ActionIcon>
+              )}
+              {isEditing && isEdit && (
+                <ThemeIcon
+                  radius="xl"
+                  color="red"
+                  className={classes.delete}
+                  onClick={turnOffEditHandler}
+                >
+                  <IconX />
+                </ThemeIcon>
+              )}
+            </Group>
+          </Group>
+        </form>
       </List.Item>
     );
   } else {
@@ -147,57 +198,83 @@ const GoalLineItem: React.FC<{
           </ThemeIcon>
         }
       >
-        {isEdit ? (
-          <TextInput
-            value={textInput}
-            style={{ flex: 1 }}
-            onChange={textChangeHandler}
-          />
-        ) : (
-          <Text style={{ flex: 1 }}>{item.label}</Text>
-        )}
-        {isEditing && !isEdit && (
-          <IconPencil
-            color="violet"
-            className={classes.delete}
-            onClick={turnOnEditHandler}
-          />
-        )}
-        {isEditing && isEdit && (
-          <IconCheck
-            color="green"
-            className={classes.delete}
-            onClick={() => {
-              if (textInput) {
-                dispatch(
-                  updateGoalTodo({
-                    id: item.id,
-                    goalId: parentId,
-                    label: textInput,
-                    isCompleted: item.isCompleted,
-                  })
-                );
-                turnOffEditHandler();
-              }
-            }}
-          />
-        )}
-        {isEditing && isEdit && (
-          <IconX
-            color="red"
-            className={classes.delete}
-            onClick={turnOffEditHandler}
-          />
-        )}
-        {isEditing && !isEdit && (
-          <IconTrash
-            color="red"
-            className={classes.delete}
-            onClick={() => {
-              dispatch(deleteGoalTodo(item.id));
-            }}
-          />
-        )}
+        <form
+          style={{ width: "100%" }}
+          onSubmit={form.onSubmit((values) => {
+            console.log("submit 2");
+
+            dispatch(
+              updateGoalTodo({
+                id: item.id,
+                goalId: parentId,
+                label: values.label,
+                isCompleted: item.isCompleted,
+              })
+            );
+            turnOffEditHandler();
+          })}
+        >
+          <Group>
+            {isEditing && isEdit ? (
+              <TextInput
+                value={form.values.label}
+                style={{ flex: 1 }}
+                onChange={(event) => {
+                  form.setFieldValue("label", event.currentTarget.value);
+                }}
+                error={form.errors.label}
+              />
+            ) : (
+              <Text style={{ flex: 1 }}>{item.label}</Text>
+            )}
+            <Group>
+              {isEditing && !isEdit && (
+                <ThemeIcon size={27} radius="xl" color="yellow">
+                  <IconPencil
+                    className={classes.delete}
+                    onClick={turnOnEditHandler}
+                  />
+                </ThemeIcon>
+              )}
+              {isEditing && !isEdit && (
+                <ThemeIcon
+                  style={{ cursor: "pointer" }}
+                  size={27}
+                  radius="xl"
+                  color="cyan"
+                  onClick={() => {
+                    dispatch(deleteGoalTodo(item.id));
+                  }}
+                >
+                  <IconTrash />
+                </ThemeIcon>
+              )}
+            </Group>
+            <Group>
+              {isEditing && isEdit && (
+                <ActionIcon type="submit">
+                  <ThemeIcon
+                    radius="xl"
+                    color="green"
+                    className={classes.delete}
+                  >
+                    <IconCheck />
+                  </ThemeIcon>
+                </ActionIcon>
+              )}
+              {isEditing && isEdit && (
+                <ThemeIcon
+                  radius="xl"
+                  color="red"
+                  className={classes.delete}
+                  onClick={turnOffEditHandler}
+                >
+                  <IconX />
+                </ThemeIcon>
+              )}
+            </Group>
+          </Group>
+        </form>
       </List.Item>
     );
   }

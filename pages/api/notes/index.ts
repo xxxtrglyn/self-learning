@@ -31,6 +31,7 @@ export default async function handler(
 
       if (result) {
         res.status(200).json(result);
+        return;
       }
     } else {
       const result = await prisma.note.update({
@@ -39,6 +40,7 @@ export default async function handler(
       });
       if (result) {
         res.status(200).json(result);
+        return;
       }
     }
   }

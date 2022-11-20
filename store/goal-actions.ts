@@ -13,24 +13,24 @@ interface todoForm {
 
 export const createNewGoal = createAsyncThunk(
   "goal/create",
-  async (goal: goalForm) => {
+  async (goal: goalForm, thunkApi) => {
     try {
       const response = await BaseURL.post("/api/goals", { title: goal.title });
       return response.data;
-    } catch {
-      console.log("?");
+    } catch (err: any) {
+      return thunkApi.rejectWithValue(err.response);
     }
   }
 );
 
 export const deleteGoal = createAsyncThunk(
   "goal/delete",
-  async (list: string[]) => {
+  async (list: string[], thunkApi) => {
     try {
       const response = await BaseURL.post("api/goals/delete-request", list);
       return list;
-    } catch {
-      console.log("?");
+    } catch (err: any) {
+      return thunkApi.rejectWithValue(err.response);
     }
   }
 );
