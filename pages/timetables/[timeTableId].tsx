@@ -1,4 +1,12 @@
-import { ActionIcon, Center, Grid, ThemeIcon, Text } from "@mantine/core";
+import {
+  ActionIcon,
+  Center,
+  Grid,
+  ThemeIcon,
+  Text,
+  ScrollArea,
+  Group,
+} from "@mantine/core";
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import React, { useState } from "react";
 import MainLayout from "../../components/ui/mainlayout";
@@ -27,42 +35,34 @@ const TimeTableDetail: NextPage = () => {
   return (
     <>
       <MainLayout order={3}>
-        <Grid
-          style={{
-            flex: 1,
-            alignItems: "flex-start",
-            justifyContent: "flex-start",
-            backgroundColor: "white",
-            height: "100vh",
-          }}
-          p={20}
-          m={0}
-        >
-          <TimeLineList id={id} isEdited={isEdited} />
+        <ScrollArea py={90}>
+          <Group p={20} m={0} noWrap>
+            <TimeLineList id={id} isEdited={isEdited} />
 
-          <ActionIcon style={{ position: "absolute", top: "3%", right: "3%" }}>
-            <ThemeIcon
-              color="cyan"
-              radius="lg"
-              size="xl"
-              onClick={() => {
-                setIsEdited((prev) => !prev);
-              }}
-            >
-              {!isEdited ? <IconTool /> : <IconCheck />}
-            </ThemeIcon>
-          </ActionIcon>
-        </Grid>
-        <AddButton>
-          <IconCirclePlus
-            size={60}
-            color="green"
-            onClick={showNewFormHandler}
-          />
-        </AddButton>
-        <DeleteButton>
-          <IconCircleMinus size={60} color="red" />
-        </DeleteButton>
+            <ActionIcon style={{ position: "fixed", top: "3%", right: "3%" }}>
+              <ThemeIcon
+                color="cyan"
+                radius="lg"
+                size="xl"
+                onClick={() => {
+                  setIsEdited((prev) => !prev);
+                }}
+              >
+                {!isEdited ? <IconTool /> : <IconCheck />}
+              </ThemeIcon>
+            </ActionIcon>
+          </Group>
+          <AddButton>
+            <IconCirclePlus
+              size={60}
+              color="green"
+              onClick={showNewFormHandler}
+            />
+          </AddButton>
+          <DeleteButton>
+            <IconCircleMinus size={60} color="red" />
+          </DeleteButton>
+        </ScrollArea>
       </MainLayout>
       {<NewTimeLine opened={isShowNewForm} onClose={hideNewFormHandler} />}
     </>

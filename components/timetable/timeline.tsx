@@ -11,11 +11,11 @@ import LightBulb from "../ui/lightbulb";
 import { Color } from "../../lib/color";
 import { TimeInput } from "@mantine/dates";
 import { Timeline } from "../../types/timeline";
-import { IconCheck } from "@tabler/icons";
+import { IconCheck, IconX } from "@tabler/icons";
 import { useForm } from "@mantine/form";
 import { ActionIcon } from "@mantine/core";
 import { useAppDispatch } from "../../store";
-import { updateTimeline } from "../../store/timetable-actions";
+import { deleteTimeLine, updateTimeline } from "../../store/timetable-actions";
 
 const TimelineNow: React.FC<{
   order: number;
@@ -46,9 +46,9 @@ const TimelineNow: React.FC<{
           );
         })}
       >
-        <Stack style={{ height: "100%" }}>
+        <Stack style={{ height: "100%", flex: 0 }}>
           <LightBulb lightColor={Color[order]} />
-          <Group position="center">
+          <Group position="center" noWrap>
             <TimeInput
               format="24"
               value={new Date(form.values.startAt)}
@@ -80,15 +80,30 @@ const TimelineNow: React.FC<{
           )}
           {isEdited && (
             <Center style={{ marginTop: "auto", flex: 1 }}>
-              <ActionIcon type="submit">
-                <ThemeIcon
-                  color="teal"
-                  radius="xl"
-                  style={{ cursor: "pointer" }}
+              <Stack>
+                <ActionIcon type="submit">
+                  <ThemeIcon
+                    color="teal"
+                    radius="xl"
+                    style={{ cursor: "pointer" }}
+                  >
+                    <IconCheck />
+                  </ThemeIcon>
+                </ActionIcon>
+                <ActionIcon
+                  onClick={() => {
+                    dispatch(deleteTimeLine(data.id));
+                  }}
                 >
-                  <IconCheck />
-                </ThemeIcon>
-              </ActionIcon>
+                  <ThemeIcon
+                    color="red"
+                    radius="xl"
+                    style={{ cursor: "pointer" }}
+                  >
+                    <IconX />
+                  </ThemeIcon>
+                </ActionIcon>
+              </Stack>
             </Center>
           )}
         </Stack>

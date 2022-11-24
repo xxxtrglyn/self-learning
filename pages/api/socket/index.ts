@@ -14,6 +14,8 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponseServerIO
 ) {
+  console.log("run twice");
+
   if (!res.socket.server.io) {
     console.log("New Socket.io server...");
     // adapt Next's net Server to http Server
@@ -23,6 +25,14 @@ export default function handler(
     });
 
     io.on("connection", (socket) => {
+      console.log("new connection");
+      console.log(socket.id);
+
+      socket.on("join-room", (roomId: string) => {
+        console.log(`${socket.id} join room`, roomId);
+
+        socket.join(roomId);
+      });
       MessageHandler(socket);
     });
     // append SocketIO server to Next.js socket server response

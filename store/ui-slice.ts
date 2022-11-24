@@ -7,7 +7,7 @@ import {
 } from "./auth-actions";
 import { createNewGoal, deleteGoal } from "./goal-actions";
 import { createOrUpdateNote, deleteNote } from "./note-actions";
-import { createNewTimeTable } from "./timetable-actions";
+import { createNewTimeTable, deleteTimeLine } from "./timetable-actions";
 
 interface Notification {
   status: string;
@@ -127,6 +127,13 @@ const uiSlice = createSlice({
       };
     });
     builder.addCase(deleteNote.fulfilled, (state) => {
+      state.notification = {
+        status: "success",
+        title: "Success",
+        message: "Delete successfully!",
+      };
+    });
+    builder.addCase(deleteTimeLine.fulfilled, (state) => {
       state.notification = {
         status: "success",
         title: "Success",

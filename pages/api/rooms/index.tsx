@@ -37,17 +37,46 @@ export default async function handler(
         },
       },
     });
-    // const result = await prisma.room.create({
-    //   data: {
-    //     roomName: name,
-    //     admin: session.sub!,
-    //     totalUser: 0,
-    //     joinsRoom: {
-    //       create: {}
-    //     }
-    //   }
-    // })
 
     res.status(201).json(newRoom);
+  }
+  if (req.method === "GET") {
+    const param = req.query;
+    const id = param.id as string;
+    if (id) {
+      const result = await prisma.room.findUnique({ where: { id: id } });
+      if (result) {
+        res.status(201).json(result);
+        return;
+      } else {
+        res.status(404).json({ message: "Room not found" });
+        return;
+      }
+    }
+    return;
+  }
+
+  if (req.method === "PATCH") {
+    const { id } = req.body;
+    const isJoin = req.query.join;
+    if (isJoin) {
+      const result = await prisma.user.update({
+        where: { id: session.sub },
+        data: {
+          joinedRooms: {
+            create: {
+              room: { connect: { id: id } },
+              isActived: true,
+            },
+          },
+        },
+      });
+      if (result) {
+        res.status(201).json(result);
+        return;
+      } else {
+        res.status(404).json({ message: "error" });
+      }
+    }
   }
 }

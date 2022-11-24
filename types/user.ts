@@ -6,8 +6,8 @@ export interface User {
   avatar?: string | null;
   dob?: string | null;
   phone?: number | null;
-  quotes?: string;
-  city?: string;
+  quotes?: string | null;
+  city?: string | null;
   job?: string | null;
   createdAt?: string;
   updatedAt?: string;

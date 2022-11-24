@@ -34,6 +34,17 @@ export const createNewTimeLine = createAsyncThunk(
     }
   }
 );
+export const deleteTimeLine = createAsyncThunk(
+  "timeline/delete",
+  async (id: string) => {
+    try {
+      const response = await BaseURL.delete(`/api/timetables/timelines/${id}`);
+      return response.data;
+    } catch {
+      console.log("?");
+    }
+  }
+);
 
 export const updateTimeline = createAsyncThunk(
   "timeline/update",

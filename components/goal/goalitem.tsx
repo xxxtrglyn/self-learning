@@ -107,6 +107,7 @@ export default function GoalItem({
         withBorder
         p="xl"
         radius="md"
+        shadow="sm"
         className={isSelected ? classes.cardInvalid : classes.card}
         onClick={deleteMode ? toggleSelectedHandler : showGoalDetailHandler}
       >

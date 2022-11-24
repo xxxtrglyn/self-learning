@@ -1,3 +1,4 @@
+import { keyframes } from "@emotion/react";
 import styled from "@emotion/styled";
 import React from "react";
 
@@ -62,4 +63,28 @@ const Circle = styled.div`
   background-color: black;
   top: 48%;
   transform: translateY(-300%);
+`;
+
+const lightUp = (color: string) => keyframes`
+  0% {
+    background-color: ${color}
+  }
+  50% {
+    background-color: ${color}+"70"
+  }
+  100% {
+    background-color: ${color}+"20"
+  }
+`;
+
+const lightUp2 = (color: string) => keyframes`
+  0% {
+    border-bottom: 2.1rem solid ${color}
+  }
+  50% {
+    border-bottom: 2.1rem solid ${color}+"70"
+  }
+  100% {
+    border-bottom: 2.1rem solid ${color}+"20"
+  }
 `;

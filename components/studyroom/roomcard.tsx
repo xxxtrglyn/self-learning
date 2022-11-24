@@ -58,7 +58,7 @@ const RoomCard: React.FC<{ values: Room }> = ({ values }) => {
         color="dark"
         style={{ margin: "0 auto" }}
         onClick={() => {
-          router.push(`/studyroom/${values.id}`);
+          router.push(`/studyroom/${values.id}?roomName=${values.roomName}`);
         }}
       >
         Enter Room

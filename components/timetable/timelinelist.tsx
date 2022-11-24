@@ -15,9 +15,12 @@ const TimeLineList: React.FC<{ id: string; isEdited: boolean }> = ({
   return (
     <>
       {timetable?.timelines.map((timeline, index) => (
-        <Grid.Col key={timeline.id} span={2} style={{ height: "95vh" }}>
-          <TimelineNow order={index} data={timeline} isEdited={isEdited} />
-        </Grid.Col>
+        <TimelineNow
+          key={timeline.id}
+          order={index}
+          data={timeline}
+          isEdited={isEdited}
+        />
       ))}
     </>
   );

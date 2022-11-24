@@ -15,7 +15,7 @@ const useStyles = createStyles((theme) => ({
 
 interface UserCardImageProps {
   image: string;
-  avatar: string;
+  avatar: string | null;
   name: string;
   job: string;
 }
@@ -72,15 +72,6 @@ export default function UserCardImage({
       <Text align="center" size="sm" color="dimmed">
         {job}
       </Text>
-      <Button
-        fullWidth
-        radius="md"
-        mt="xl"
-        size="md"
-        color={theme.colorScheme === "dark" ? undefined : "dark"}
-      >
-        Follow
-      </Button>
     </Card>
   );
 }

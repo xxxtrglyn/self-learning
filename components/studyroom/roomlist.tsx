@@ -1,6 +1,6 @@
 import React from "react";
 import { Carousel } from "@mantine/carousel";
-import { createStyles } from "@mantine/core";
+import { createStyles, Text, Card, Center } from "@mantine/core";
 import RoomCard from "./roomcard";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
@@ -11,7 +11,7 @@ const useStyles = createStyles(() => ({
   },
 }));
 
-const RoomList = () => {
+const RoomList: React.FC<{ isEmpty: boolean }> = ({ isEmpty }) => {
   const { classes } = useStyles();
   const rooms = useSelector((state: RootState) => state.room.items);
   const slides = rooms.map((slide) => (
@@ -19,12 +19,23 @@ const RoomList = () => {
       <RoomCard values={slide} />
     </Carousel.Slide>
   ));
+  const noRoom = (
+    <Center>
+      <Card shadow="sm" style={{ display: "inline-block" }}>
+        <Text size="xl">You join no room!</Text>
+      </Card>
+    </Center>
+  );
 
   return (
     <div className={classes.container}>
-      <Carousel withIndicators slideSize="20%" loop>
-        {slides}
-      </Carousel>
+      {!isEmpty ? (
+        <Carousel withIndicators slideSize="20%" loop>
+          {slides}
+        </Carousel>
+      ) : (
+        noRoom
+      )}
     </div>
   );
 };

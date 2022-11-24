@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Room } from "../types/Room";
-import { createNewRoom } from "./room-actions";
+import { createNewRoom, joinRoom } from "./room-actions";
 
 const initialState: { items: Room[] } = {
   items: [],
@@ -19,6 +19,12 @@ const roomSlice = createSlice({
       createNewRoom.fulfilled,
       (state, action: { type: string; payload: Room }) => {
         state.items.push(action.payload);
+      }
+    );
+    builder.addCase(
+      joinRoom.fulfilled,
+      (state, action: { type: string; payload: Room | undefined }) => {
+        state.items.push(action.payload!);
       }
     );
   },

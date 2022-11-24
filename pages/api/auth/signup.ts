@@ -8,7 +8,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
   const data = req.body;
 
-  const { email, password } = data;
+  const { email, password, fullname } = data;
 
   if (!email || !password || password.trim().length < 7) {
     res.status(422).json({
@@ -33,6 +33,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     data: {
       email: email,
       password: hashedPassword,
+      fullname: fullname,
     },
   });
 

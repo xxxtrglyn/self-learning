@@ -30,7 +30,6 @@ const StudyRoom: NextPage<{ roomList: Room[] }> = ({ roomList }) => {
   const [isShowJoinForm, setIsShowJoinForm] = useState<boolean>(false);
   const [isShowCreateForm, setIsShowCreateForm] = useState<boolean>(false);
   const { classes } = useStyles();
-  console.log(roomList);
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(roomActions.replaceRoomList(roomList));
@@ -73,7 +72,7 @@ const StudyRoom: NextPage<{ roomList: Room[] }> = ({ roomList }) => {
                 Create Room
               </Button>
             </Group>
-            <RoomList />
+            <RoomList isEmpty={roomList.length === 0 || roomList === null} />
           </Stack>
         </SimpleGrid>
       </MainLayout>
@@ -106,21 +105,20 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  const rooms = await prisma.room.findMany({
-    include: {
-      joinsRoom: { where: { userId: token.sub } },
-    },
+  const rooms = await prisma.joinedRoom.findMany({
+    where: { userId: token.sub },
+    include: { room: true },
   });
 
   const transformRooms: Room[] = rooms.map((room) => {
     return {
-      id: room.id,
-      roomName: room.roomName,
-      admin: room.admin,
-      totalUser: room.totalUser,
-      createdAt: room.createdAt.toISOString(),
-      updatedAt: room.updatedAt.toISOString(),
-      coverImage: room.coverImage,
+      id: room.room.id,
+      roomName: room.room.roomName,
+      admin: room.room.admin,
+      totalUser: room.room.totalUser,
+      createdAt: room.room.createdAt.toISOString(),
+      updatedAt: room.room.updatedAt.toISOString(),
+      coverImage: room.room.coverImage,
     };
   });
   return {

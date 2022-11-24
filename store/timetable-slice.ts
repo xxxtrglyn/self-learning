@@ -4,6 +4,7 @@ import { Timetable } from "../types/timetable";
 import {
   createNewTimeLine,
   createNewTimeTable,
+  deleteTimeLine,
   deleteTimetable,
 } from "./timetable-actions";
 
@@ -53,6 +54,26 @@ const timeTableSlice = createSlice({
         }),
       };
     });
+    builder.addCase(
+      deleteTimeLine.fulfilled,
+      (state, action: { type: string; payload: Timeline }) => {
+        return {
+          ...state,
+          items: [...state.items].map((timetable) => {
+            if (timetable.id !== action.payload.timeTableId) {
+              return timetable;
+            } else {
+              return {
+                ...timetable,
+                timelines: timetable.timelines.filter(
+                  (timeline) => timeline.id !== action.payload.id
+                ),
+              };
+            }
+          }),
+        };
+      }
+    );
   },
 });
 

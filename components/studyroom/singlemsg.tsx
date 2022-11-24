@@ -1,18 +1,29 @@
 import React from "react";
 import { Group, Avatar, Card, Text } from "@mantine/core";
+import { Message } from "../../types/message";
 
-const SingleMsg = () => {
+const SingleMsg: React.FC<{ value: Message; left: boolean }> = ({
+  value,
+  left,
+}) => {
   return (
-    <Group>
-      <Avatar
-        radius="xl"
-        src="https://i.pinimg.com/736x/c4/0f/fc/c40ffc3ce38f26ffa3ea72507e334e85.jpg"
-        alt="user's avatar"
-      />
-      <Card radius="xl" p={12} style={{ backgroundColor: "#E4E6EB" }}>
-        <Text>Chỉ anh và em đến khi già nữa chỉ say đắm em thôi</Text>
-      </Card>
-    </Group>
+    <>
+      {!left ? (
+        <Group py={5} px={10}>
+          <Avatar radius="xl" src={value.user?.avatar} alt="user's avatar" />
+          <Card radius="xl" p={12} style={{ backgroundColor: "#E4E6EB" }}>
+            <Text>{value.content}</Text>
+          </Card>
+        </Group>
+      ) : (
+        <Group position="right" py={5} px={10}>
+          <Card radius="xl" p={12} style={{ backgroundColor: "#E4E6EB" }}>
+            <Text>{value.content}</Text>
+          </Card>
+          <Avatar radius="xl" src={value.user?.avatar} alt="user's avatar" />
+        </Group>
+      )}
+    </>
   );
 };
 

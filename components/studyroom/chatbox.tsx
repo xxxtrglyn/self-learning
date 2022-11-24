@@ -7,10 +7,14 @@ import {
   Textarea,
   ThemeIcon,
   Button,
+  ScrollArea,
 } from "@mantine/core";
 import SingleMsg from "./singlemsg";
 import { IconPhoto } from "@tabler/icons";
 import { Message } from "../../types/message";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store";
+import { useSession } from "next-auth/react";
 
 const useStyles = createStyles(() => ({
   container: {
@@ -39,23 +43,34 @@ const useStyles = createStyles(() => ({
   },
 }));
 
-const ChatBox: React.FC<{ onSend: (message: Message) => void }> = ({
-  onSend,
-}) => {
+const ChatBox: React.FC<{
+  roomName: string;
+  value: Message[];
+  onSend: (message: Message) => void;
+}> = ({ onSend, value, roomName }) => {
   const { classes } = useStyles();
-  const [msg, setMsg] = useState<string>("");
+  const session = useSession();
 
+  const [msg, setMsg] = useState<string>("");
+  const allMessage = value.map((message, index) => (
+    <SingleMsg
+      left={session.data?.user?.email === message.user?.email}
+      key={message.id ? message.id : `message.user?.id${index}`}
+      value={message}
+    />
+  ));
+  const user = useSelector((state: RootState) => state.auth.info);
   return (
     <div className={classes.container}>
       <Group position="center" className={classes.header}>
         <Title order={2} weight={500} align="center" size="sm">
-          The room name
+          {roomName}
         </Title>
       </Group>
       <div className={classes.box}>
-        <Stack p={10}>
-          <SingleMsg />
-        </Stack>
+        <ScrollArea style={{ height: "65vh" }} p={10}>
+          {allMessage}
+        </ScrollArea>
         <Group className={classes.textarea} position="right">
           <ThemeIcon radius="xl">
             <IconPhoto />
@@ -73,7 +88,16 @@ const ChatBox: React.FC<{ onSend: (message: Message) => void }> = ({
             }}
             style={msg ? { flex: 1 } : {}}
           />
-          <Button onClick={onSend.bind(this, { content: msg })}>Send</Button>
+          <Button
+            onClick={() => {
+              if (msg) {
+                onSend({ content: msg, user: user! });
+                setMsg("");
+              }
+            }}
+          >
+            Send
+          </Button>
         </Group>
       </div>
     </div>

@@ -1,7 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { User } from "../types/user";
 import { logout, signInWithCredential } from "./auth-actions";
 
-const initialState = { isLogin: false };
+const initialState: { isLogin: boolean; info: User | null } = {
+  isLogin: false,
+  info: null,
+};
 
 const authSlice = createSlice({
   name: "auth",
@@ -9,6 +13,9 @@ const authSlice = createSlice({
   reducers: {
     login(state) {
       state.isLogin = true;
+    },
+    updateInfo(state, action: { type: string; payload: User }) {
+      state.info = action.payload;
     },
   },
   extraReducers(builder) {
