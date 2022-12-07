@@ -1,12 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 import authSlice from "./auth-slice";
+import documentSlice from "./document-slice";
 
 import goalSlice from "./goal-slice";
 import noteSlice from "./note-slice";
 import roomSlice from "./room-slice";
+import TimeSlice from "./time-slice";
 import timeTableSlice from "./timetable-slice";
-import uiSlice, { uiActions } from "./ui-slice";
+import uiSlice from "./ui-slice";
 
 const store = configureStore({
   reducer: {
@@ -15,7 +17,9 @@ const store = configureStore({
     note: noteSlice.reducer,
     timetable: timeTableSlice.reducer,
     room: roomSlice.reducer,
+    document: documentSlice.reducer,
     ui: uiSlice.reducer,
+    time: TimeSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

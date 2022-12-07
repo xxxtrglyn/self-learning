@@ -81,7 +81,7 @@ const Note: NextPage<{ allNotes: Note[] }> = ({ allNotes }) => {
   };
 
   return (
-    <MainLayout order={2}>
+    <MainLayout order={5}>
       <Grid p={0} m={0} style={{ flex: 1, height: "100vh" }}>
         <Grid.Col className={classes.list} span={3}>
           <Group position="apart">

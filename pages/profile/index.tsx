@@ -21,6 +21,8 @@ import { RootState, useAppDispatch } from "../../store";
 import { updateProfile } from "../../store/auth-actions";
 import ChangePassword from "../../components/auth/changepassword";
 import { useSelector } from "react-redux";
+import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from "@mantine/dropzone";
+import axios from "axios";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -49,24 +51,24 @@ const Profile: NextPage<{ userInfo: User }> = ({ userInfo }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const isLoading = useSelector((state: RootState) => state.ui.loaderOverlay);
+  const [files, setFiles] = useState<FileWithPath>();
 
   const form = useForm({
     initialValues: {
       email: userInfo.email,
       fullname: userInfo.fullname!,
-      avatar: userInfo.avatar,
+      avatar: userInfo.avatar ? userInfo.avatar : "",
       dob: userInfo.dob ? userInfo.dob : null,
       phone: userInfo.phone ? userInfo.phone : "",
       quotes: userInfo.quotes ? userInfo.quotes : "",
       city: userInfo.city ? userInfo.city : "",
     },
+    validateInputOnChange: true,
 
     validate: {
       // email: (val) => (/^\S+@\S+$/.test(val) ? null : "Invalid email"),
       fullname: (val) =>
-        val.length <= 6
-          ? "Password should include at least 6 characters"
-          : null,
+        val.length < 6 ? "Fullname should include at least 6 characters" : null,
     },
   });
 
@@ -76,14 +78,65 @@ const Profile: NextPage<{ userInfo: User }> = ({ userInfo }) => {
         <div className={classes.wrapper}>
           <SimpleGrid>
             <Center>
-              <Avatar
-                size={150}
+              <Dropzone
+                p={0}
+                m={0}
                 radius={100}
-                src={form.values.avatar}
-                alt="avatar of a user"
-              />
+                onDrop={(files) => {
+                  setFiles(files[0]);
+                }}
+                onReject={(files) => console.log("rejected files", files)}
+                maxSize={3 * 1024 ** 2}
+                accept={IMAGE_MIME_TYPE}
+              >
+                <Avatar
+                  size={150}
+                  radius={100}
+                  src={files ? URL.createObjectURL(files) : form.values.avatar}
+                  alt="avatar of a user"
+                />
+              </Dropzone>
             </Center>
-            <form>
+            <form
+              onSubmit={form.onSubmit((values) => {
+                if (files) {
+                  const avatarFile = new FormData();
+                  avatarFile.append("file", files!);
+                  avatarFile.append("upload_preset", "user_avatar");
+                  avatarFile.append("cloud_name", "dvmih2q1y");
+                  axios
+                    .post(
+                      "https://api.cloudinary.com/v1_1/dvmih2q1y/upload",
+                      avatarFile
+                    )
+                    .then((res) => {
+                      dispatch(
+                        updateProfile({
+                          avatar: res.data.url,
+                          fullname: values.fullname,
+                          phone: +values.phone,
+                          dob: values.dob,
+                          city: values.city,
+                          quotes: values.quotes,
+                          job: "IT",
+                        })
+                      );
+                    });
+                } else {
+                  dispatch(
+                    updateProfile({
+                      avatar: values.avatar,
+                      fullname: values.fullname,
+                      phone: +values.phone,
+                      dob: values.dob,
+                      city: values.city,
+                      quotes: values.quotes,
+                      job: "IT",
+                    })
+                  );
+                }
+              })}
+            >
               <Stack>
                 <TextInput
                   label="Email"
@@ -99,6 +152,7 @@ const Profile: NextPage<{ userInfo: User }> = ({ userInfo }) => {
                       form.setFieldValue("fullname", e.currentTarget.value);
                     }}
                     labelProps={{ style: { color: "white" } }}
+                    error={form.errors.fullname}
                   />
                   <TextInput
                     label="Phone"
@@ -138,22 +192,7 @@ const Profile: NextPage<{ userInfo: User }> = ({ userInfo }) => {
                   minRows={4}
                 />
                 <Group position="center">
-                  <Button
-                    variant="white"
-                    loading={isLoading}
-                    onClick={() => {
-                      dispatch(
-                        updateProfile({
-                          fullname: form.values.fullname,
-                          phone: +form.values.phone,
-                          dob: form.values.dob,
-                          city: form.values.city,
-                          quotes: form.values.quotes,
-                          job: "IT",
-                        })
-                      );
-                    }}
-                  >
+                  <Button variant="white" type="submit" loading={isLoading}>
                     Save
                   </Button>
                   <Button

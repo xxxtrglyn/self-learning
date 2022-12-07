@@ -25,16 +25,39 @@ model User {
   createdAt     DateTime  @default(now()) @map(name: "created_at")
   updatedAt     DateTime  @updatedAt @map(name: "updated_at")
 
-  notes       Note[]
-  goals       Goal[]
-  documents   Document[]
-  timetables  TimeTable[]
-  accounts    Account[]
-  sessions    Session[]
-  joinedRooms JoinedRoom[]
-  messages    MessageLine[]
+  notes        Note[]
+  goals        Goal[]
+  documents    Document[]
+  timetables   TimeTable[]
+  accounts     Account[]
+  sessions     Session[]
+  joinedRooms  JoinedRoom[]
+  messages     MessageLine[]
+  timecontrols TimeControl[]
 
   @@map(name: "users")
+}
+
+model TimeItem {
+  id            String   @id @default(cuid())
+  amount        Int
+  description   String
+  timeControlId String
+  createdAt     DateTime @default(now()) @map(name: "created_at")
+  updatedAt     DateTime @updatedAt @map(name: "updated_at")
+
+  timeControl TimeControl @relation(fields: [timeControlId], references: [id])
+}
+
+model TimeControl {
+  id        String   @id @default(cuid())
+  date      DateTime
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @updatedAt @map(name: "updated_at")
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+
+  timeitems TimeItem[]
 }
 
 model MessageLine {
@@ -141,12 +164,13 @@ model Document {
   id          String   @id @default(cuid())
   user        User     @relation(fields: [userId], references: [id])
   userId      String
-  subjectName String   @unique @map(name: "subject_name")
+  subjectName String   @map(name: "subject_name")
   createdAt   DateTime @default(now()) @map(name: "created_at")
   updatedAt   DateTime @updatedAt @map(name: "updated_at")
 
   lessons Lesson[]
 
+  @@unique([userId, subjectName])
   @@map(name: "documents")
 }
 

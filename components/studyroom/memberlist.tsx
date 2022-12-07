@@ -1,23 +1,39 @@
 import React from "react";
 import { Card } from "@mantine/core";
 import { User } from "../../types/user";
-import { Stack, Text } from "@mantine/core";
+import { Stack, Text, Group } from "@mantine/core";
 import Member from "./member";
+import Clock from "../ui/clock";
 
-const MemberList: React.FC<{ value: User[] }> = ({ value }) => {
+const RightPart: React.FC<{
+  value: User[];
+  learnTime: number;
+  onResetClock: () => void;
+}> = ({ value, learnTime, onResetClock }) => {
   const list = value.map((member) => <Member key={member.id} value={member} />);
   return (
     <Stack style={{ height: "100%" }}>
       <Card shadow="sm">
         <Text align="center" weight={500}>
-          MemberList
+          Member
         </Text>
       </Card>
       <Card style={{ flex: 1 }} shadow="sm">
         {list}
       </Card>
+      <Card style={{ flex: 1 }} shadow="sm">
+        <Group align="center" position="center" style={{ height: "100%" }}>
+          {learnTime ? (
+            <Clock value={learnTime} onReset={onResetClock} />
+          ) : (
+            <Text size={90} weight={300}>
+              --:--
+            </Text>
+          )}
+        </Group>
+      </Card>
     </Stack>
   );
 };
 
-export default MemberList;
+export default RightPart;

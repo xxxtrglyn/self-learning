@@ -25,13 +25,11 @@ export default function handler(
     });
 
     io.on("connection", (socket) => {
-      console.log("new connection");
-      console.log(socket.id);
-
       socket.on("join-room", (roomId: string) => {
-        console.log(`${socket.id} join room`, roomId);
-
         socket.join(roomId);
+      });
+      socket.on("send-images", (imageURL: string, id: string) => {
+        socket.to(id).emit("receive-images", imageURL);
       });
       MessageHandler(socket);
     });

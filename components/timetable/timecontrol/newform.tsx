@@ -5,19 +5,22 @@ import {
   Title,
   Button,
   LoadingOverlay,
+  NumberInput,
 } from "@mantine/core";
 import React from "react";
-import { RootState, useAppDispatch } from "../../store";
-import { createNewGoal } from "../../store/goal-actions";
+import { RootState, useAppDispatch } from "../../../store";
+import { createNewTime } from "../../../store/timecontrol-actions";
 import { useForm } from "@mantine/form";
 import { useSelector } from "react-redux";
+import { DatePicker } from "@mantine/dates";
 
-const NewGoal: React.FC<{ opened: boolean; onClose: () => void }> = (props) => {
+const NewForm: React.FC<{ opened: boolean; onClose: () => void }> = (props) => {
   const dispatch = useAppDispatch();
   const form = useForm({
     validateInputOnChange: true,
     initialValues: {
       title: "",
+      time: new Date(),
     },
     validate: {
       title: (value) =>
@@ -40,7 +43,11 @@ const NewGoal: React.FC<{ opened: boolean; onClose: () => void }> = (props) => {
       >
         <form
           onSubmit={form.onSubmit((values) => {
-            dispatch(createNewGoal({ title: values.title }));
+            dispatch(
+              createNewTime({
+                date: values.time.toISOString(),
+              })
+            );
             form.reset();
           })}
         >
@@ -55,6 +62,13 @@ const NewGoal: React.FC<{ opened: boolean; onClose: () => void }> = (props) => {
               onChange={(event) => {
                 form.setFieldValue("title", event.currentTarget.value);
               }}
+            />
+            <DatePicker
+              onChange={(value) => {
+                form.setFieldValue("time", value!);
+              }}
+              label="Time"
+              value={form.values.time}
             />
             {loading ? (
               <Button disabled>Posting</Button>
@@ -71,4 +85,4 @@ const NewGoal: React.FC<{ opened: boolean; onClose: () => void }> = (props) => {
   );
 };
 
-export default NewGoal;
+export default NewForm;

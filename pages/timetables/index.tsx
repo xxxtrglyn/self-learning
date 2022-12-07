@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Button, Center, Text, Grid } from "@mantine/core";
+import { Button, Center, Text, Grid, Container } from "@mantine/core";
 import { GetServerSideProps, NextPage } from "next";
 import React, { useEffect, useState } from "react";
 import MainLayout from "../../components/ui/mainlayout";
@@ -14,6 +14,8 @@ import NewTimeTable from "../../components/timetable/newtimetable";
 import { useSelector } from "react-redux";
 import TimeTableItem from "../../components/timetable/timetableitem";
 import { deleteTimetable } from "../../store/timetable-actions";
+import TimeSlider from "../../components/timetable/timecontrol/timeslider";
+import DaySlider from "../../components/timetable/timecontrol/dayslider";
 
 const TimeTable: NextPage<{ allTimetables: Timetable[] }> = ({
   allTimetables,

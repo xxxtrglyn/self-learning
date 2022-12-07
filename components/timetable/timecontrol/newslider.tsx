@@ -5,23 +5,34 @@ import {
   Title,
   Button,
   LoadingOverlay,
+  NumberInput,
 } from "@mantine/core";
 import React from "react";
-import { RootState, useAppDispatch } from "../../store";
-import { createNewGoal } from "../../store/goal-actions";
+import { RootState } from "../../../store";
 import { useForm } from "@mantine/form";
 import { useSelector } from "react-redux";
 
-const NewGoal: React.FC<{ opened: boolean; onClose: () => void }> = (props) => {
-  const dispatch = useAppDispatch();
+const NewSlider: React.FC<{
+  opened: boolean;
+  onClose: () => void;
+  onAdd: (description: string, amount: number) => void;
+  value?: { description: string; amount: number };
+}> = (props) => {
   const form = useForm({
     validateInputOnChange: true,
     initialValues: {
-      title: "",
+      description: props.value ? props.value.description : "",
+      amount: props.value ? props.value.amount : 0,
     },
     validate: {
-      title: (value) =>
+      description: (value) =>
         value.length < 2 ? "Title must have at least 2 letters" : null,
+      amount: (value) =>
+        value > 720
+          ? "Shouldn't learn more than 12 hours"
+          : value < 15
+          ? "At least 15 minutes"
+          : null,
     },
   });
 
@@ -40,27 +51,41 @@ const NewGoal: React.FC<{ opened: boolean; onClose: () => void }> = (props) => {
       >
         <form
           onSubmit={form.onSubmit((values) => {
-            dispatch(createNewGoal({ title: values.title }));
-            form.reset();
+            props.onAdd(values.description, values.amount);
+            if (!props.value) {
+              form.reset();
+            }
           })}
         >
           <Stack>
             <Title order={2} weight={100} align="center">
-              Add new goal
+              Add
             </Title>
             <TextInput
               label="Title"
               placeholder="Enter title here"
-              value={form.values.title}
+              value={form.values.description}
               onChange={(event) => {
-                form.setFieldValue("title", event.currentTarget.value);
+                form.setFieldValue("description", event.currentTarget.value);
               }}
+              error={form.errors.description}
+            />
+            <NumberInput
+              label="Time"
+              value={form.values.amount}
+              onChange={(value) => {
+                form.setFieldValue("amount", value!);
+              }}
+              min={15}
+              max={720}
+              step={15}
+              error={form.errors.amount}
             />
             {loading ? (
               <Button disabled>Posting</Button>
             ) : (
               <Button disabled={!form.isValid()} type="submit">
-                Post
+                {!props.value ? "Post" : "Update"}
               </Button>
             )}
           </Stack>
@@ -71,4 +96,4 @@ const NewGoal: React.FC<{ opened: boolean; onClose: () => void }> = (props) => {
   );
 };
 
-export default NewGoal;
+export default NewSlider;

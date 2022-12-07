@@ -14,7 +14,7 @@ import {
   IconDeviceDesktopAnalytics,
   IconCalendarStats,
   IconUser,
-  IconHourglass,
+  IconBooks,
   IconLogout,
   IconSwitchHorizontal,
   IconNote,
@@ -85,7 +85,7 @@ const mockdata = [
   { icon: IconCalendarStats, label: "Timetable" },
   { icon: IconUser, label: "Profile" },
   { icon: IconNote, label: "Note" },
-  { icon: IconHourglass, label: "Setting" },
+  { icon: IconBooks, label: "Document" },
 ];
 
 const NavbarMinimal: React.FC<{ order: number }> = ({ order }) => {
@@ -120,6 +120,9 @@ const NavbarMinimal: React.FC<{ order: number }> = ({ order }) => {
         }
         if (link.label === "Study Room") {
           router.replace("/studyroom");
+        }
+        if (link.label === "Document") {
+          router.replace("/documents");
         }
       }}
     />

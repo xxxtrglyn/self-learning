@@ -8,6 +8,7 @@ import {
   ThemeIcon,
   Button,
   ScrollArea,
+  Image,
 } from "@mantine/core";
 import SingleMsg from "./singlemsg";
 import { IconPhoto } from "@tabler/icons";
@@ -15,6 +16,7 @@ import { Message } from "../../types/message";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { useSession } from "next-auth/react";
+import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
 
 const useStyles = createStyles(() => ({
   container: {
@@ -31,6 +33,8 @@ const useStyles = createStyles(() => ({
   },
   textarea: {
     marginTop: "auto",
+    height: "10vh",
+    overflow: "hidden",
   },
   box: {
     display: "flex",
@@ -47,11 +51,27 @@ const ChatBox: React.FC<{
   roomName: string;
   value: Message[];
   onSend: (message: Message) => void;
-}> = ({ onSend, value, roomName }) => {
+  onSendImage: (files: FileWithPath[]) => void;
+}> = ({ onSend, value, roomName, onSendImage }) => {
   const { classes } = useStyles();
   const session = useSession();
-
   const [msg, setMsg] = useState<string>("");
+  const [files, setFiles] = useState<FileWithPath[]>([]);
+
+  const previews = files.map((file, index) => {
+    const imageUrl = URL.createObjectURL(file);
+    return (
+      <Image
+        key={index}
+        src={imageUrl}
+        height="50px"
+        width="50px"
+        imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
+        alt="preview"
+      />
+    );
+  });
+
   const allMessage = value.map((message, index) => (
     <SingleMsg
       left={session.data?.user?.email === message.user?.email}
@@ -72,9 +92,29 @@ const ChatBox: React.FC<{
           {allMessage}
         </ScrollArea>
         <Group className={classes.textarea} position="right">
-          <ThemeIcon radius="xl">
+          <ScrollArea
+            style={{
+              maxHeight: "10vh",
+              width: "30%",
+            }}
+          >
+            <Group noWrap position="right">
+              {previews}
+            </Group>
+          </ScrollArea>
+          <Dropzone
+            onDrop={(files) => setFiles(files)}
+            onReject={(files) => console.log("rejected files", files)}
+            maxSize={3 * 1024 ** 2}
+            accept={IMAGE_MIME_TYPE}
+            styles={{
+              inner: { display: "flex", alignItems: "center" },
+            }}
+            sx={() => ({ border: 0, padding: 3 })}
+          >
             <IconPhoto />
-          </ThemeIcon>
+          </Dropzone>
+
           <Textarea
             variant="filled"
             radius="xl"
@@ -86,12 +126,18 @@ const ChatBox: React.FC<{
             onChange={(event) => {
               setMsg(event.currentTarget.value);
             }}
-            style={msg ? { flex: 1 } : {}}
+            style={msg ? { width: "50%" } : { width: "20%" }}
           />
           <Button
             onClick={() => {
               if (msg) {
-                onSend({ content: msg, user: user! });
+                if (files) {
+                  onSend({ content: msg, user: user!, type: "normal" });
+                  onSendImage(files);
+                } else {
+                  onSend({ content: msg, user: user!, type: "normal" });
+                }
+
                 setMsg("");
               }
             }}

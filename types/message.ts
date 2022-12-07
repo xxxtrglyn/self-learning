@@ -8,5 +8,6 @@ export interface Message {
   createdAt?: string;
   user?: User;
   room?: Room;
+  type: string;
   content: string;
 }

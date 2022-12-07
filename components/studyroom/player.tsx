@@ -13,7 +13,7 @@ const useStyles = createStyles(() => ({
 
 const Player = () => {
   const { classes } = useStyles();
-  return <audio className={classes.player} controls></audio>;
+  return <audio className={classes.player} controls autoPlay></audio>;
 };
 
 export default Player;

@@ -41,7 +41,7 @@ const RoomCard: React.FC<{ values: Room }> = ({ values }) => {
       p="xl"
       radius="md"
       sx={{
-        backgroundImage: `url("https://randomc.net/image/86/86%20-%2022%20-%20Large%2023.jpg")`,
+        backgroundImage: `url("https://images.unsplash.com/photo-1542553458-79a13aebfda6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=423&q=80")`,
       }}
       className={classes.card}
     >

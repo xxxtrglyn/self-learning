@@ -8,11 +8,14 @@ import {
 } from "@mantine/core";
 import React from "react";
 import { RootState, useAppDispatch } from "../../store";
-import { createNewGoal } from "../../store/goal-actions";
+// import { createNewDocument } from "../../store/goal-actions";
 import { useForm } from "@mantine/form";
 import { useSelector } from "react-redux";
+import { createNewDocument } from "../../store/document-actions";
 
-const NewGoal: React.FC<{ opened: boolean; onClose: () => void }> = (props) => {
+const NewDocument: React.FC<{ opened: boolean; onClose: () => void }> = (
+  props
+) => {
   const dispatch = useAppDispatch();
   const form = useForm({
     validateInputOnChange: true,
@@ -40,13 +43,13 @@ const NewGoal: React.FC<{ opened: boolean; onClose: () => void }> = (props) => {
       >
         <form
           onSubmit={form.onSubmit((values) => {
-            dispatch(createNewGoal({ title: values.title }));
+            dispatch(createNewDocument(values.title));
             form.reset();
           })}
         >
           <Stack>
             <Title order={2} weight={100} align="center">
-              Add new goal
+              Add new document
             </Title>
             <TextInput
               label="Title"
@@ -71,4 +74,4 @@ const NewGoal: React.FC<{ opened: boolean; onClose: () => void }> = (props) => {
   );
 };
 
-export default NewGoal;
+export default NewDocument;

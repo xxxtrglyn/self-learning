@@ -13,6 +13,7 @@ interface registerForm {
 }
 
 interface updateForm {
+  avatar: string;
   fullname: string;
   phone: number;
   dob: string | null;

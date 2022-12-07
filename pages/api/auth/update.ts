@@ -22,6 +22,7 @@ export default async function handler(
       id: session?.sub,
     },
     data: {
+      avatar: data.avatar,
       fullname: data.fullname,
       phone: data.phone,
       dob: data.dob,
