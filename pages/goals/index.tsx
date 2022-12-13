@@ -89,8 +89,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
         return {
           id: goal.id,
           userId: goal.userId,
-          label: goal.title,
-          list: transformTodo.filter((todo) => todo.goalId === goal.id),
+          title: goal.title,
+          todos: transformTodo.filter((todo) => todo.goalId === goal.id),
+          start: goal.start.toISOString(),
+          end: goal.end.toISOString(),
           createdAt: goal.createdAt.toISOString(),
           updatedAt: goal.updatedAt.toISOString(),
         };

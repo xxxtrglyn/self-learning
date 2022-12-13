@@ -1,5 +1,13 @@
-import { createStyles, Text, Card, RingProgress, Group } from "@mantine/core";
+import {
+  createStyles,
+  Text,
+  Card,
+  RingProgress,
+  Group,
+  Badge,
+} from "@mantine/core";
 import { useEffect, useState } from "react";
+import { TransformDate } from "../../lib/transformdate";
 import { Todo } from "../../types/todo";
 import DetailGoal from "./detailgoal";
 
@@ -57,8 +65,10 @@ const useStyles = createStyles((theme) => ({
 
 interface StatsRingCardProps {
   id: string;
-  label: string;
-  list: Todo[];
+  title: string;
+  start: string;
+  end: string;
+  todos: Todo[];
   deleteMode: boolean;
   onAdd: (id: string) => void;
   onRemove: (id: string) => void;
@@ -66,15 +76,17 @@ interface StatsRingCardProps {
 
 export default function GoalItem({
   id,
-  label,
-  list,
+  title,
+  start,
+  end,
+  todos,
   deleteMode,
   onAdd,
   onRemove,
 }: StatsRingCardProps) {
   const { classes, theme } = useStyles();
-  const total = list.length;
-  const completed = list.filter((todo) => todo.isCompleted === true).length;
+  const total = todos.length;
+  const completed = todos.filter((todo) => todo.isCompleted === true).length;
 
   const [isSelected, setIsSelected] = useState<boolean>(false);
 
@@ -110,11 +122,21 @@ export default function GoalItem({
         shadow="sm"
         className={isSelected ? classes.cardInvalid : classes.card}
         onClick={deleteMode ? toggleSelectedHandler : showGoalDetailHandler}
+        px={20}
+        pb={20}
+        pt={0}
       >
+        <Group position="right" pt={10}>
+          <Badge>
+            <Text size={10} italic p={0} m={0}>
+              {TransformDate(start)} to {TransformDate(end)}
+            </Text>
+          </Badge>
+        </Group>
         <div className={classes.inner}>
           <div>
             <Text size="xl" className={classes.label2}>
-              {label}
+              {title}
             </Text>
             <div>
               <Text className={classes.lead} mt={30}>
@@ -175,8 +197,8 @@ export default function GoalItem({
           onClose={hideGoalDetailHandler}
           opened={isShowGoalDetail}
           id={id}
-          label={label}
-          list={list}
+          label={title}
+          list={todos}
         />
       }
     </>

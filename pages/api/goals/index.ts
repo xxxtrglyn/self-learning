@@ -13,7 +13,7 @@ export default async function handler(
   }
   if (req.method === "POST") {
     const data = req.body;
-    const { title } = data;
+    const { title, start, end } = data;
     const existingGoal = await prisma.goal.findUnique({
       where: { userId_title: { userId: session?.sub!, title: title } },
     });
@@ -34,6 +34,8 @@ export default async function handler(
     const result = await prisma.goal.create({
       data: {
         title: title,
+        start: new Date(start),
+        end: new Date(end),
         user: { connect: { email: session!.email! } },
       },
     });

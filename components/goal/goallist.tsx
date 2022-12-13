@@ -1,4 +1,4 @@
-import { Button, Grid, Text, Center } from "@mantine/core";
+import { Button, Grid, Text, Center, Group, Badge, Card } from "@mantine/core";
 import React, { useEffect, useState } from "react";
 import GoalItem from "./goalitem";
 import { useSelector } from "react-redux";
@@ -57,6 +57,7 @@ const GoalList: React.FC<{
     <Grid.Col span={4} key={item.id}>
       <GoalItem
         {...item}
+        todos={item.todos ? item.todos : []}
         deleteMode={deleteMode}
         onAdd={addToSelectedList}
         onRemove={removeFromSelectedList}
@@ -65,23 +66,30 @@ const GoalList: React.FC<{
   ));
   return (
     <Grid m={0} p={0} style={{ flex: 1 }}>
+      <Grid.Col span={12}>
+        <Group align="center" position="center" pt={10}>
+          <Badge size="xl">GOAL</Badge>
+        </Group>
+      </Grid.Col>
       {deleteMode && (
-        <Grid.Col span={12} style={{ backgroundColor: "white" }}>
+        <Grid.Col span={12}>
           <Center>
-            <Text>
-              Select these GOALS you want to DELETE and click DELETE BUTTON,{" "}
-              <Text color="red" style={{ display: "inline" }}>
-                {selectedItem.length}
+            <Card shadow="sm">
+              <Text>
+                Select these GOALS you want to DELETE and click DELETE BUTTON,{" "}
+                <Text color="red" style={{ display: "inline" }}>
+                  {selectedItem.length}
+                </Text>
+                <Text style={{ display: "inline" }}> selected goal</Text>
+                <Button
+                  style={{ display: "block", margin: "0 auto" }}
+                  color="red"
+                  onClick={openModal}
+                >
+                  Delete
+                </Button>
               </Text>
-              <Text style={{ display: "inline" }}> selected goal</Text>
-              <Button
-                style={{ display: "block", margin: "0 auto" }}
-                color="red"
-                onClick={openModal}
-              >
-                Delete
-              </Button>
-            </Text>
+            </Card>
           </Center>
         </Grid.Col>
       )}

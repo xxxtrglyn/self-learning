@@ -1,3 +1,9 @@
+import { Document2 } from "./document";
+import { Goal } from "./goal";
+import { Note } from "./note";
+import { Room } from "./Room";
+import { TimeControl } from "./timecontrol";
+
 export interface User {
   id: string;
   fullname?: string | null;
@@ -11,4 +17,10 @@ export interface User {
   job?: string | null;
   createdAt?: string;
   updatedAt?: string;
+  goals?: Goal[];
+  rooms?: Room[];
+  timecontrols?: TimeControl[];
+  notes?: Note[];
+  documents?: Document2[];
+  role: string;
 }

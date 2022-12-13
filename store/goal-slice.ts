@@ -26,18 +26,12 @@ const goalSlice = createSlice({
     },
   },
   extraReducers(builder) {
-    builder.addCase(createNewGoal.fulfilled, (state, action) => {
-      console.log("success", action.payload);
-
-      state.items.push({
-        id: action.payload.id,
-        userId: action.payload.userId,
-        createdAt: action.payload.createdAt,
-        updatedAt: action.payload.updatedAt,
-        list: [],
-        label: action.payload.title,
-      });
-    });
+    builder.addCase(
+      createNewGoal.fulfilled,
+      (state, action: { type: string; payload: Goal }) => {
+        state.items.push({ ...action.payload, todos: [] });
+      }
+    );
     builder.addCase(deleteGoal.fulfilled, (state, action) => {
       return {
         ...state,
@@ -54,7 +48,7 @@ const goalSlice = createSlice({
         const index = state.items.findIndex(
           (goal) => goal.id === action.payload.goalId
         );
-        state.items[index].list.push(action.payload);
+        state.items[index].todos!.push(action.payload);
       }
     );
     builder.addCase(
@@ -63,10 +57,10 @@ const goalSlice = createSlice({
         const indexGoal = state.items.findIndex(
           (goal) => goal.id === action.payload.goalId
         );
-        const indexTodo = state.items[indexGoal].list.findIndex(
+        const indexTodo = state.items[indexGoal].todos!.findIndex(
           (todo) => todo.id === action.payload.id
         );
-        state.items[indexGoal].list[indexTodo] = action.payload;
+        state.items[indexGoal].todos![indexTodo] = action.payload;
       }
     );
     builder.addCase(
@@ -75,28 +69,30 @@ const goalSlice = createSlice({
         const indexGoal = state.items.findIndex(
           (goal) => goal.id === action.payload.goalId
         );
-        const newList = state.items[indexGoal].list.filter(
+        const newtodos = state.items[indexGoal].todos!.filter(
           (todo) => todo.id !== action.payload.id
         );
         const newItems = state.items.map((goal, index) => {
           if (index === indexGoal) {
-            return { ...goal, list: newList };
+            return { ...goal, todos: newtodos };
           }
           return goal;
         });
         return { ...state, items: newItems };
       }
     );
-    builder.addCase(updateGoal.fulfilled, (state, action) => {
-      const newItems = [...state.items].map((goal) => {
-        if (goal.id === action.payload.id) {
-          return { ...goal, label: action.payload.title };
-        }
-        return goal;
-      });
-      console.log(newItems);
-      return { ...state, items: newItems };
-    });
+    builder.addCase(
+      updateGoal.fulfilled,
+      (state, action: { type: string; payload: Goal }) => {
+        const newItems = [...state.items].map((goal) => {
+          if (goal.id === action.payload.id) {
+            return { ...goal, title: action.payload.title };
+          }
+          return goal;
+        });
+        return { ...state, items: newItems };
+      }
+    );
   },
 });
 

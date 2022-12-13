@@ -24,7 +24,7 @@ const monthNames = [
   "Dec",
 ];
 
-const DaySlider: React.FC<{ id: string }> = ({ id }) => {
+const DaySlider: React.FC<{ id: string; index: number }> = ({ id, index }) => {
   const items = useSelector((state: RootState) =>
     state.time.items.find((timeitem) => timeitem.id === id)
   );
@@ -62,11 +62,21 @@ const DaySlider: React.FC<{ id: string }> = ({ id }) => {
   return (
     <>
       <Group spacing={5} my={10} mx={10}>
-        <Card radius="sm" shadow="sm" style={{ width: "8vw" }} mr={5}>
+        <Card
+          radius="sm"
+          shadow="sm"
+          style={{ width: "8vw", border: `1px solid ${Color[index]}` }}
+          mr={5}
+          withBorder
+        >
           {monthNames[monthByNumber]}, {date}
         </Card>
         <Card
-          style={{ flex: 1, minHeight: "100%" }}
+          style={{
+            flex: 1,
+            minHeight: "100%",
+            border: `1px solid ${Color[index]}`,
+          }}
           radius="sm"
           shadow="sm"
           p={5}

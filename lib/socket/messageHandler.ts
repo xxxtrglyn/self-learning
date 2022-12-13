@@ -4,7 +4,6 @@ import { Message } from "../../types/message";
 const MessageHandler = (socket: Socket) => {
   const createdMessage = (msg: Message, id: string) => {
     socket.to(id).emit("newIncomingMessage", msg);
-    console.log("room: ", id);
   };
 
   socket.on("createdMessage", createdMessage);

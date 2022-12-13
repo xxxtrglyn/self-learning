@@ -5,40 +5,17 @@ import {
   Title,
   Button,
   LoadingOverlay,
-  Select,
-  Group,
-  FileInput,
 } from "@mantine/core";
-import React, { useState } from "react";
+import React from "react";
 import { RootState } from "../../store";
 import { useForm } from "@mantine/form";
 import { useSelector } from "react-redux";
-import { Dropzone, FileWithPath } from "@mantine/dropzone";
-import { IconMusic } from "@tabler/icons";
-import axios from "axios";
-
-interface Song {
-  label: string;
-  value: string;
-}
-
-const DUMMY_DATA: Song[] = [
-  {
-    label: "Darwin's Game",
-    value: "http://abc.com",
-  },
-  {
-    label: "Darwin's Game 2",
-    value: "http://abcd.com",
-  },
-];
 
 const NewStudyCase: React.FC<{
   opened: boolean;
   onClose: () => void;
   onStart: (value: number) => void;
 }> = (props) => {
-  const [files, setFiles] = useState<File | null>();
   const form = useForm({
     validateInputOnChange: true,
     initialValues: {
@@ -64,11 +41,6 @@ const NewStudyCase: React.FC<{
       >
         <form
           onSubmit={form.onSubmit((values) => {
-            // const x = new FormData();
-            // x.append("file", files!);
-            // x.append("upload_preset", "eyr7icyv");
-            // x.append("cloud_name", "dvmih2q1y");
-            // axios.post("https://api.cloudinary.com/v1_1/dvmih2q1y/upload", x);
             props.onStart(values.title);
             form.reset();
             props.onClose();
@@ -87,11 +59,7 @@ const NewStudyCase: React.FC<{
                 form.setFieldValue("title", value!);
               }}
             />
-            <Select label="Lesson" data={DUMMY_DATA} style={{ flex: 1 }} />
-            <Group>
-              <Select label="Music" data={DUMMY_DATA} style={{ flex: 1 }} />
-              <FileInput value={files} onChange={setFiles} />
-            </Group>
+
             {loading ? (
               <Button disabled>Posting</Button>
             ) : (

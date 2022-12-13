@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { useSession } from "next-auth/react";
 import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
+import { User } from "../../types/user";
 
 const useStyles = createStyles(() => ({
   container: {
@@ -51,7 +52,7 @@ const ChatBox: React.FC<{
   roomName: string;
   value: Message[];
   onSend: (message: Message) => void;
-  onSendImage: (files: FileWithPath[]) => void;
+  onSendImage: (files: FileWithPath[], user: User) => void;
 }> = ({ onSend, value, roomName, onSendImage }) => {
   const { classes } = useStyles();
   const session = useSession();
@@ -105,7 +106,7 @@ const ChatBox: React.FC<{
           <Dropzone
             onDrop={(files) => setFiles(files)}
             onReject={(files) => console.log("rejected files", files)}
-            maxSize={3 * 1024 ** 2}
+            maxSize={5 * 1024 ** 2}
             accept={IMAGE_MIME_TYPE}
             styles={{
               inner: { display: "flex", alignItems: "center" },
@@ -133,12 +134,16 @@ const ChatBox: React.FC<{
               if (msg) {
                 if (files) {
                   onSend({ content: msg, user: user!, type: "normal" });
-                  onSendImage(files);
+                  onSendImage(files, user!);
                 } else {
                   onSend({ content: msg, user: user!, type: "normal" });
                 }
 
                 setMsg("");
+              } else {
+                if (files && !msg) {
+                  onSendImage(files, user!);
+                }
               }
             }}
           >

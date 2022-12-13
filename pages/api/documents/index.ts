@@ -36,9 +36,30 @@ export default async function handler(
     const result = await prisma.document.create({
       data: {
         subjectName: title,
+        logtimes: {
+          create: { learnTime: 0, user: { connect: { id: session.sub } } },
+        },
         user: { connect: { email: session!.email! } },
       },
     });
     res.status(201).json(result);
+  }
+
+  if (req.method === "PATCH") {
+    const isUpdateLearnTime = req.query["learntime"];
+    const data = req.body;
+    if (isUpdateLearnTime) {
+      const result = await prisma.logTime.update({
+        where: {
+          userId_documentId: { userId: session.sub!, documentId: data.id },
+        },
+        data: {
+          learnTime: {
+            increment: data.learnTime,
+          },
+        },
+      });
+      res.status(201).json(result);
+    }
   }
 }

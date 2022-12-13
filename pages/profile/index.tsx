@@ -29,9 +29,8 @@ const useStyles = createStyles((theme) => ({
     flex: 1,
     height: "100vh",
     boxSizing: "border-box",
-    backgroundImage: `linear-gradient(-60deg, ${
-      theme.colors[theme.primaryColor][4]
-    } 0%, ${theme.colors[theme.primaryColor][7]} 100%)`,
+    backgroundColor: "rgba(0,0,0, 0.3)",
+    border: "1px solid black",
     borderRadius: theme.radius.md,
     marginLeft: 200,
     marginRight: 200,

@@ -28,8 +28,8 @@ export default function handler(
       socket.on("join-room", (roomId: string) => {
         socket.join(roomId);
       });
-      socket.on("send-images", (imageURL: string, id: string) => {
-        socket.to(id).emit("receive-images", imageURL);
+      socket.on("setClock", (time: number, id: string) => {
+        socket.to(id).emit("receiveClock", time);
       });
       MessageHandler(socket);
     });

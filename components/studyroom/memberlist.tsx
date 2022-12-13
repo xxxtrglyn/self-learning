@@ -8,9 +8,9 @@ import Clock from "../ui/clock";
 const RightPart: React.FC<{
   value: User[];
   learnTime: number;
-  onResetClock: () => void;
-}> = ({ value, learnTime, onResetClock }) => {
+}> = ({ value, learnTime }) => {
   const list = value.map((member) => <Member key={member.id} value={member} />);
+
   return (
     <Stack style={{ height: "100%" }}>
       <Card shadow="sm">
@@ -24,7 +24,7 @@ const RightPart: React.FC<{
       <Card style={{ flex: 1 }} shadow="sm">
         <Group align="center" position="center" style={{ height: "100%" }}>
           {learnTime ? (
-            <Clock value={learnTime} onReset={onResetClock} />
+            <Clock value={learnTime} />
           ) : (
             <Text size={90} weight={300}>
               --:--

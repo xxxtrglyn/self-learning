@@ -3,6 +3,6 @@ export interface Lesson {
   documentId: string;
   lessonName: string;
   content: string | null;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }

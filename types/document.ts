@@ -1,6 +1,6 @@
 import { Lesson } from "./lesson";
 
-export interface Document {
+export interface Document2 {
   id: string;
   userId: string;
   subjectName: string;

@@ -16,13 +16,15 @@ import {
   IconUser,
   IconBooks,
   IconLogout,
-  IconSwitchHorizontal,
+  IconAd,
   IconNote,
+  IconChartDots2,
 } from "@tabler/icons";
 import { MantineLogo } from "@mantine/ds";
 import { useRouter } from "next/router";
 import { useAppDispatch } from "../../store";
 import { logout } from "../../store/auth-actions";
+import { useSession } from "next-auth/react";
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -86,12 +88,14 @@ const mockdata = [
   { icon: IconUser, label: "Profile" },
   { icon: IconNote, label: "Note" },
   { icon: IconBooks, label: "Document" },
+  { icon: IconChartDots2, label: "Analytics" },
 ];
 
-const NavbarMinimal: React.FC<{ order: number }> = ({ order }) => {
+const NavbarMinimal: React.FC<{ order?: number }> = ({ order }) => {
   const [active, setActive] = useState(order);
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const session = useSession();
 
   const links = mockdata.map((link, index) => (
     <NavbarLink
@@ -101,7 +105,7 @@ const NavbarMinimal: React.FC<{ order: number }> = ({ order }) => {
       onClick={() => {
         setActive(index);
         if (link.label === "Home") {
-          router.replace("/");
+          router.replace("/dashboard");
         }
         if (link.label === "Analytics") {
           router.replace("/analytics");
@@ -113,7 +117,7 @@ const NavbarMinimal: React.FC<{ order: number }> = ({ order }) => {
           router.replace("/notes");
         }
         if (link.label === "Timetable") {
-          router.replace("/timetables");
+          router.replace("/daycontrol");
         }
         if (link.label === "Profile") {
           router.replace("/profile");
@@ -124,6 +128,9 @@ const NavbarMinimal: React.FC<{ order: number }> = ({ order }) => {
         if (link.label === "Document") {
           router.replace("/documents");
         }
+        if (link.label === "Document") {
+          router.replace("/analytics");
+        }
       }}
     />
   ));
@@ -131,7 +138,13 @@ const NavbarMinimal: React.FC<{ order: number }> = ({ order }) => {
   return (
     <Navbar height={"100vh"} width={{ base: 80 }} p="md">
       <Center>
-        <MantineLogo type="mark" size={30} />
+        <MantineLogo
+          type="mark"
+          size={30}
+          onClick={() => {
+            router.push("/");
+          }}
+        />
       </Center>
       <Navbar.Section grow mt={50}>
         <Stack justify="center" spacing={0}>
@@ -140,7 +153,15 @@ const NavbarMinimal: React.FC<{ order: number }> = ({ order }) => {
       </Navbar.Section>
       <Navbar.Section>
         <Stack justify="center" spacing={0}>
-          <NavbarLink icon={IconSwitchHorizontal} label="Change account" />
+          {session.data?.user?.email === "admin@gmail.com" && (
+            <NavbarLink
+              icon={IconAd}
+              label="Admin"
+              onClick={() => {
+                router.push("/admin");
+              }}
+            />
+          )}
           <NavbarLink
             icon={IconLogout}
             label="Logout"

@@ -4,6 +4,8 @@ import { Todo } from "../types/todo";
 
 interface goalForm {
   title: string;
+  start: string;
+  end: string;
 }
 
 interface todoForm {
@@ -15,7 +17,7 @@ export const createNewGoal = createAsyncThunk(
   "goal/create",
   async (goal: goalForm, thunkApi) => {
     try {
-      const response = await BaseURL.post("/api/goals", { title: goal.title });
+      const response = await BaseURL.post("/api/goals", goal);
       return response.data;
     } catch (err: any) {
       return thunkApi.rejectWithValue(err.response);

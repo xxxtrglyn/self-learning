@@ -16,6 +16,7 @@ import {
 import NewStudyCase from "./newstudycase";
 import axios from "axios";
 import { FileWithPath } from "@mantine/dropzone";
+import LogStudyTime from "./logstudytime";
 
 let socket: Socket;
 
@@ -28,9 +29,14 @@ const ChatRoom: React.FC<{
   const [messages, setMessages] = useState<Message[]>(messagesList);
   const [isShowNewForm, setIsShowNewForm] = useState<boolean>(false);
   const [time, setTime] = useState<number>(0);
+  const [logTime, setLogTime] = useState<number>(0);
+  const [isShowLogForm, setIsShowLogForm] = useState<boolean>(false);
+
+  console.log(isShowLogForm);
 
   const startLearn = (remainTime: number) => {
-    setTime(remainTime);
+    socket.emit("setClock", remainTime, id);
+    setTime(remainTime * 60);
   };
 
   useEffect(() => {
@@ -40,9 +46,11 @@ const ChatRoom: React.FC<{
     socket.on("newIncomingMessage", (msg: Message) => {
       setMessages((prev) => [...prev].concat(msg));
     });
-    // socket.on("receive-images", (imageURL: string) => {
+    socket.on("receiveClock", (time: number) => {
+      console.log("receive clock", time);
 
-    // })
+      setTime(time * 60);
+    });
     socket.on("connect", () => {
       socket.emit("join-room", id);
     });
@@ -58,7 +66,7 @@ const ChatRoom: React.FC<{
     setMessages((prev) => [...prev].concat(message));
   };
 
-  const saveImageToCloud = (file: File) => {
+  const saveImageToCloud = (file: File, user: User) => {
     const img = new FormData();
     img.append("file", file);
     img.append("upload_preset", "upload_from_room");
@@ -66,18 +74,38 @@ const ChatRoom: React.FC<{
     axios
       .post("https://api.cloudinary.com/v1_1/dvmih2q1y/upload", img)
       .then((res) => {
-        socket.emit("send-images", res.data.url, id);
-        setMessages((prev) =>
-          [...prev].concat({ content: res.data.url, type: "img" })
-        );
+        sendMessage({
+          content: res.data.url,
+          type: res.data.width > res.data.height ? "imgl" : "imgp",
+          user: user,
+        });
       });
   };
 
-  const sendMultipleImagesHandler = (files: FileWithPath[]) => {
+  const sendMultipleImagesHandler = (files: FileWithPath[], user: User) => {
     files.forEach((file) => {
-      saveImageToCloud(file);
+      saveImageToCloud(file, user);
     });
   };
+
+  useEffect(() => {
+    let minus = setInterval(() => {
+      if (time > 0) {
+        setTime((prev) => prev - 1);
+        setLogTime((prev) => prev + 1);
+      } else {
+        if (logTime) {
+          setIsShowLogForm(true);
+          clearInterval(minus);
+          console.log("run");
+        }
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(minus);
+    };
+  }, [time, logTime]);
 
   return (
     <>
@@ -91,13 +119,7 @@ const ChatRoom: React.FC<{
           />
         </Grid.Col>
         <Grid.Col span={3}>
-          <MemberList
-            onResetClock={() => {
-              setTime(0);
-            }}
-            learnTime={time}
-            value={members}
-          />
+          <MemberList learnTime={time} value={members} />
         </Grid.Col>
         <Grid.Col span={9}>
           <Player />
@@ -141,6 +163,13 @@ const ChatRoom: React.FC<{
         opened={isShowNewForm}
         onClose={() => {
           setIsShowNewForm(false);
+        }}
+      />
+      <LogStudyTime
+        value={logTime}
+        opened={isShowLogForm}
+        onClose={() => {
+          setIsShowLogForm(false);
         }}
       />
     </>

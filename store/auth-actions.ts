@@ -1,6 +1,7 @@
-import { createAction, createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import { signIn, signOut } from "next-auth/react";
 import { BaseURL } from "../lib/axiosinstance";
+import { User } from "../types/user";
 interface loginForm {
   email: string;
   password: string;
@@ -36,6 +37,7 @@ export const signInWithCredential = createAsyncThunk(
       password: user.password,
     });
     if (response!.ok) {
+      window.location.replace("http://localhost:3000/dashboard");
       return true;
     } else {
       return false;
@@ -43,7 +45,7 @@ export const signInWithCredential = createAsyncThunk(
   }
 );
 export const logout = createAsyncThunk("auth/signout", async () => {
-  signOut();
+  signOut({ callbackUrl: "http://localhost:3000" });
   return true;
 });
 
@@ -56,10 +58,7 @@ export const signUpwithCredentical = createAsyncThunk(
         password: user.password,
         fullname: user.fullname,
       });
-      console.log(response.data);
-    } catch {
-      console.log("error occur");
-    }
+    } catch {}
   }
 );
 
@@ -68,6 +67,17 @@ export const updateProfile = createAsyncThunk(
   async (user: updateForm) => {
     try {
       const response = await BaseURL.post("/api/auth/update", user);
+    } catch {
+      console.log("error occurs");
+    }
+  }
+);
+
+export const adminUpdateUser = createAsyncThunk(
+  "auth/updateuser",
+  async (user: User) => {
+    try {
+      const response = await BaseURL.post("/api/auth/admin/user", user);
     } catch {
       console.log("error occurs");
     }

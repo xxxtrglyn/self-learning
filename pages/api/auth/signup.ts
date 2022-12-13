@@ -34,6 +34,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       email: email,
       password: hashedPassword,
       fullname: fullname,
+      role: "user",
     },
   });
 

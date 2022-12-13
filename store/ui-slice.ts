@@ -5,6 +5,13 @@ import {
   signUpwithCredentical,
   updateProfile,
 } from "./auth-actions";
+import {
+  createNewDocument,
+  createNewLesson,
+  deleteDocument,
+  deleteLesson,
+  updateLesson,
+} from "./document-actions";
 import { createNewGoal, deleteGoal } from "./goal-actions";
 import { createOrUpdateNote, deleteNote } from "./note-actions";
 import { createNewTimeTable, deleteTimeLine } from "./timetable-actions";
@@ -119,6 +126,20 @@ const uiSlice = createSlice({
         message: "Create new Timetable successfully!",
       };
     });
+    builder.addCase(createNewDocument.fulfilled, (state) => {
+      state.notification = {
+        status: "success",
+        title: "Success",
+        message: "Create new document successfully!",
+      };
+    });
+    builder.addCase(createNewLesson.fulfilled, (state) => {
+      state.notification = {
+        status: "success",
+        title: "Success",
+        message: "Create new lesson successfully!",
+      };
+    });
     builder.addCase(createOrUpdateNote.fulfilled, (state) => {
       state.notification = {
         status: "success",
@@ -126,7 +147,28 @@ const uiSlice = createSlice({
         message: "Create/Update successfully!",
       };
     });
+    builder.addCase(updateLesson.fulfilled, (state) => {
+      state.notification = {
+        status: "success",
+        title: "Success",
+        message: "Update successfully!",
+      };
+    });
     builder.addCase(deleteNote.fulfilled, (state) => {
+      state.notification = {
+        status: "success",
+        title: "Success",
+        message: "Delete successfully!",
+      };
+    });
+    builder.addCase(deleteLesson.fulfilled, (state) => {
+      state.notification = {
+        status: "success",
+        title: "Success",
+        message: "Delete successfully!",
+      };
+    });
+    builder.addCase(deleteDocument.fulfilled, (state) => {
       state.notification = {
         status: "success",
         title: "Success",

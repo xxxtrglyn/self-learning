@@ -6,7 +6,6 @@ import {
   Text,
   Group,
   Button,
-  Divider,
   Checkbox,
   Anchor,
   Stack,
@@ -62,13 +61,6 @@ const Auth: React.FC<{
       <Text size="lg" weight={500}>
         Welcome to Self-Learning, {type} with
       </Text>
-
-      <Group grow mb="md" mt="md">
-        <GoogleButton radius="xl">Google</GoogleButton>
-        <FacebookButton radius="xl">Facebook</FacebookButton>
-      </Group>
-
-      <Divider label="Or continue with email" labelPosition="center" my="lg" />
 
       <form
         onSubmit={form.onSubmit((values) => {

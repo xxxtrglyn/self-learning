@@ -9,10 +9,19 @@ const authHandler: NextApiHandler = (req, res) => NextAuth(req, res, options);
 export default authHandler;
 
 export const options: NextAuthOptions = {
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.role = user?.role;
+      }
+      return token;
+    },
+  },
   session: {
     strategy: "jwt",
-    maxAge: 3000000,
+    maxAge: 86400,
   },
+
   providers: [
     CredentialsProvider({
       name: "Credentials",

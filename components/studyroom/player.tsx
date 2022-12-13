@@ -1,19 +1,55 @@
-import React from "react";
+import React, { memo, useRef, useState } from "react";
 
-import { createStyles } from "@mantine/core";
+import { createStyles, FileInput, Group } from "@mantine/core";
 
 const useStyles = createStyles(() => ({
   container: {
     height: "85vh",
   },
   player: {
-    width: "100%",
+    width: "50%",
   },
 }));
 
-const Player = () => {
+const Player: React.FC = memo(() => {
   const { classes } = useStyles();
-  return <audio className={classes.player} controls autoPlay></audio>;
-};
+
+  const ref = useRef<HTMLAudioElement>(null);
+  const [currentSong, setCurrentSong] = useState<number>(0);
+  const [file, setFile] = useState<File[] | undefined>([]);
+
+  return (
+    <>
+      <Group>
+        <FileInput
+          value={file}
+          onChange={setFile}
+          multiple
+          placeholder="Select songs here"
+          style={{ width: "45%" }}
+        />
+
+        {file?.length && (
+          <audio
+            src={URL.createObjectURL(file[currentSong]!)}
+            className={classes.player}
+            autoPlay
+            controls
+            onEnded={() => {
+              if (currentSong === file.length - 1) {
+                setCurrentSong(0);
+              } else {
+                setCurrentSong((prev) => prev + 1);
+              }
+            }}
+            ref={ref}
+          />
+        )}
+      </Group>
+    </>
+  );
+});
+
+Player.displayName = "Player";
 
 export default Player;

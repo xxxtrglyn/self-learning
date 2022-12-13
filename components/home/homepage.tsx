@@ -32,6 +32,10 @@ import {
   IconPhone,
   IconMail,
 } from "@tabler/icons";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store";
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -137,6 +141,7 @@ const HomePage = () => {
   const hideLoginFormHandler = () => {
     setIsShowLoginForm(false);
   };
+
   const featureCard = features.map((feature) => (
     <Card
       key={feature.title}

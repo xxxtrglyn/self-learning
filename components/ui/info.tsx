@@ -1,7 +1,11 @@
 import { createStyles, Card, Avatar, Text, Button } from "@mantine/core";
+import { TransformDate } from "../../lib/transformdate";
 
 const useStyles = createStyles((theme) => ({
   card: {
+    display: "flex",
+    flexDirection: "column",
+    minHeight: "70vh",
     backgroundColor:
       theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
   },
@@ -16,16 +20,14 @@ const useStyles = createStyles((theme) => ({
 interface UserCardImageProps {
   image: string;
   avatar: string | null;
-  name: string;
-  job: string;
+  name: string | null;
+  job?: string | undefined | null;
+  quotes?: string | undefined | null;
+  city?: string | undefined | null;
+  dob?: string | undefined | null;
 }
 
-export default function UserCardImage({
-  image,
-  avatar,
-  name,
-  job,
-}: UserCardImageProps) {
+const UserCardImage: React.FC<{ user: UserCardImageProps }> = ({ user }) => {
   const { classes, theme } = useStyles();
 
   return (
@@ -36,9 +38,11 @@ export default function UserCardImage({
       radius="md"
       className={classes.card}
     >
-      <Card.Section sx={{ backgroundImage: `url(${image})`, height: 140 }} />
+      <Card.Section
+        sx={{ backgroundImage: `url(${user.image})`, height: 140 }}
+      />
       <Avatar
-        src={avatar}
+        src={user.avatar}
         size={80}
         radius={80}
         mx="auto"
@@ -46,32 +50,34 @@ export default function UserCardImage({
         className={classes.avatar}
       />
       <Text align="center" size="lg" weight={500} mt="sm">
-        {name}
+        {user.name}
       </Text>
       <Text align="center" size="sm" color="dimmed">
-        {job}
+        {user.job}
       </Text>
       <Text align="center" size="sm" color="dimmed">
-        {job}
+        {user.dob
+          ? TransformDate(user.dob) +
+            ", " +
+            new Date(user.dob!).getFullYear().toString()
+          : null}
       </Text>
       <Text align="center" size="sm" color="dimmed">
-        {job}
+        {user.city ? user.city : null}
       </Text>
-      <Text align="center" size="sm" color="dimmed">
-        {job}
-      </Text>
-      <Text align="center" size="sm" color="dimmed">
-        {job}
-      </Text>
-      <Text align="center" size="sm" color="dimmed">
-        {job}
-      </Text>
-      <Text align="center" size="sm" color="dimmed">
-        {job}
-      </Text>
-      <Text align="center" size="sm" color="dimmed">
-        {job}
-      </Text>
+      {user.quotes && (
+        <Text
+          align="center"
+          size="sm"
+          color="dimmed"
+          italic
+          style={{ marginTop: "auto" }}
+        >
+          &quot;{user.quotes}&quot;
+        </Text>
+      )}
     </Card>
   );
-}
+};
+
+export default UserCardImage;

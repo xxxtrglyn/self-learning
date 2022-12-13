@@ -5,6 +5,7 @@ import {
   Group,
   SimpleGrid,
   Button,
+  Badge,
 } from "@mantine/core";
 import React, { useState, useEffect } from "react";
 import RoomList from "../../components/studyroom/roomlist";
@@ -43,6 +44,9 @@ const StudyRoom: NextPage<{ roomList: Room[] }> = ({ roomList }) => {
           style={{ width: "100%", height: "100%", padding: 10 }}
         >
           <Stack>
+            <Group align="center" position="center" pt={10}>
+              <Badge size="xl">Study Room</Badge>
+            </Group>
             <Group position="center">
               <TextInput
                 className={classes.search}

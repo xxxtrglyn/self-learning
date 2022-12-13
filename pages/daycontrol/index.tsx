@@ -1,9 +1,8 @@
 import styled from "@emotion/styled";
-import { Card, Container, Text } from "@mantine/core";
+import { Badge, Container, Group, ScrollArea } from "@mantine/core";
 import { GetServerSideProps, NextPage } from "next";
 import { getToken } from "next-auth/jwt";
 import React, { useEffect, useState } from "react";
-import DaySlider from "../../components/timetable/timecontrol/dayslider";
 import MainLayout from "../../components/ui/mainlayout";
 import prisma from "../../lib/prisma";
 import { TimeControl } from "../../types/timecontrol";
@@ -31,9 +30,14 @@ const DayControl: NextPage<{ allTimeControl: TimeControl[] }> = ({
 
   return (
     <>
-      <MainLayout order={1}>
+      <MainLayout order={3}>
         <Container fluid style={{ flex: 1 }}>
-          <DayList />
+          <Group align="center" position="center" pt={20} pb={10}>
+            <Badge size="xl">Timetable</Badge>
+          </Group>
+          <ScrollArea style={{ height: "80vh" }}>
+            <DayList />
+          </ScrollArea>
         </Container>
         <AddButton>
           <IconCirclePlus

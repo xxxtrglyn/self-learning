@@ -3,8 +3,10 @@ import { Todo } from "./todo";
 export interface Goal {
   id: string;
   userId: string;
-  label: string;
+  title: string;
+  start: string;
+  end: string;
   createdAt?: string;
   updatedAt?: string;
-  list: Todo[];
+  todos?: Todo[];
 }
