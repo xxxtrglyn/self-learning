@@ -23,6 +23,13 @@ export default async function handler(
         },
       },
     });
+    const deleteTimeitem = prisma.timeItem.deleteMany({
+      where: {
+        documentId: {
+          in: data,
+        },
+      },
+    });
 
     const deleteGoal = prisma.document.deleteMany({
       where: {
@@ -31,7 +38,11 @@ export default async function handler(
         },
       },
     });
-    const transaction = await prisma.$transaction([deleteTodo, deleteGoal]);
+    const transaction = await prisma.$transaction([
+      deleteTodo,
+      deleteTimeitem,
+      deleteGoal,
+    ]);
     if (transaction) {
       res.status(200).json({ message: "Deleted" });
     }

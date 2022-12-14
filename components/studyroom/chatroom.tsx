@@ -97,7 +97,6 @@ const ChatRoom: React.FC<{
         if (logTime) {
           setIsShowLogForm(true);
           clearInterval(minus);
-          console.log("run");
         }
       }
     }, 1000);

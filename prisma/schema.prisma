@@ -48,6 +48,8 @@ model TimeItem {
   timeControlId String
   createdAt     DateTime @default(now()) @map(name: "created_at")
   updatedAt     DateTime @updatedAt @map(name: "updated_at")
+  document      Document @relation(fields: [documentId], references: [id])
+  documentId    String
 
   timeControl TimeControl @relation(fields: [timeControlId], references: [id])
 }
@@ -184,7 +186,8 @@ model Document {
   updatedAt   DateTime  @updatedAt @map(name: "updated_at")
   logtimes    LogTime[]
 
-  lessons Lesson[]
+  lessons   Lesson[]
+  timeitems TimeItem[]
 
   @@unique([userId, subjectName])
   @@map(name: "documents")

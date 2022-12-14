@@ -6,6 +6,7 @@ import {
   Button,
   LoadingOverlay,
   NumberInput,
+  Select,
 } from "@mantine/core";
 import React from "react";
 import { RootState } from "../../../store";
@@ -15,12 +16,22 @@ import { useSelector } from "react-redux";
 const NewSlider: React.FC<{
   opened: boolean;
   onClose: () => void;
-  onAdd: (description: string, amount: number) => void;
-  value?: { description: string; amount: number };
+  onAdd: (description: string, amount: number, documentId: string) => void;
+  value?: { description: string; amount: number; documentId: string };
 }> = (props) => {
+  const documents = useSelector((state: RootState) => state.document.items);
+  const dataSelect = documents.map((doc) => ({
+    label: doc.subjectName,
+    value: doc.id,
+  }));
   const form = useForm({
     validateInputOnChange: true,
     initialValues: {
+      subject: props.value
+        ? props.value.documentId
+        : documents.length > 0
+        ? documents[0].id
+        : "",
       description: props.value ? props.value.description : "",
       amount: props.value ? props.value.amount : 0,
     },
@@ -51,7 +62,7 @@ const NewSlider: React.FC<{
       >
         <form
           onSubmit={form.onSubmit((values) => {
-            props.onAdd(values.description, values.amount);
+            props.onAdd(values.description, values.amount, values.subject);
             if (!props.value) {
               form.reset();
             }
@@ -69,6 +80,14 @@ const NewSlider: React.FC<{
                 form.setFieldValue("description", event.currentTarget.value);
               }}
               error={form.errors.description}
+            />
+            <Select
+              label="Subject"
+              data={dataSelect}
+              value={form.values.subject}
+              onChange={(value) => {
+                form.setFieldValue("subject", value!);
+              }}
             />
             <NumberInput
               label="Time"

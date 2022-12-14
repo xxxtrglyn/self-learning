@@ -11,7 +11,7 @@ const useStyles = createStyles(() => ({
   },
 }));
 
-const RoomList: React.FC<{ isEmpty: boolean }> = ({ isEmpty }) => {
+const RoomList: React.FC<{}> = () => {
   const { classes } = useStyles();
   const rooms = useSelector((state: RootState) => state.room.items);
   const slides = rooms.map((slide) => (
@@ -29,7 +29,7 @@ const RoomList: React.FC<{ isEmpty: boolean }> = ({ isEmpty }) => {
 
   return (
     <div className={classes.container}>
-      {!isEmpty ? (
+      {rooms.length > 0 ? (
         <Carousel withIndicators slideSize="20%" loop>
           {slides}
         </Carousel>

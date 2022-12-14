@@ -16,7 +16,12 @@ export const createNewTime = createAsyncThunk(
 export const createNewSlider = createAsyncThunk(
   "slider/create",
   async (
-    time: { id: string; description: string; amount: number },
+    time: {
+      id: string;
+      description: string;
+      amount: number;
+      documentId: string;
+    },
     thunkApi
   ) => {
     try {

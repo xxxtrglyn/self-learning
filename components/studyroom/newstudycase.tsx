@@ -5,6 +5,7 @@ import {
   Title,
   Button,
   LoadingOverlay,
+  Select,
 } from "@mantine/core";
 import React from "react";
 import { RootState } from "../../store";
@@ -20,6 +21,7 @@ const NewStudyCase: React.FC<{
     validateInputOnChange: true,
     initialValues: {
       title: 0,
+      des: "",
     },
     validate: {
       title: (value) => (value < 1 ? "At least one minute" : null),
@@ -27,7 +29,13 @@ const NewStudyCase: React.FC<{
   });
 
   const loading = useSelector((state: RootState) => state.ui.loaderOverlay);
-
+  const timeitems = useSelector((state: RootState) => state.time.items).find(
+    (item) => new Date(item.date).getDate() === new Date().getDate()
+  )?.timeitems;
+  const dataSelect = timeitems?.map((timeitem) => ({
+    label: timeitem.description!,
+    value: timeitem.id!,
+  }));
   return (
     <>
       <Modal
@@ -50,10 +58,31 @@ const NewStudyCase: React.FC<{
             <Title order={2} weight={100} align="center">
               LEARN NOW
             </Title>
+            <Select
+              label="Label"
+              data={dataSelect!}
+              placeholder="Select items"
+              nothingFound="Nothing found"
+              searchable
+              creatable
+              value={form.values.des}
+              onChange={(val) => {
+                form.setFieldValue("des", val!);
+                form.setFieldValue(
+                  "title",
+                  timeitems?.find((item) => item.id === val)?.amount!
+                );
+              }}
+              getCreateLabel={(query) => `+ Create ${query}`}
+              onCreate={(query) => {
+                const item = { value: query, label: query };
+                form.setFieldValue("des", query);
+                return item;
+              }}
+            />
             <NumberInput
               min={0}
               label="Time"
-              placeholder="Enter title here"
               value={form.values.title}
               onChange={(value) => {
                 form.setFieldValue("title", value!);

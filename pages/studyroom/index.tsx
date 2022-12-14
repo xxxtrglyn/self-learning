@@ -76,7 +76,7 @@ const StudyRoom: NextPage<{ roomList: Room[] }> = ({ roomList }) => {
                 Create Room
               </Button>
             </Group>
-            <RoomList isEmpty={roomList.length === 0 || roomList === null} />
+            <RoomList />
           </Stack>
         </SimpleGrid>
       </MainLayout>

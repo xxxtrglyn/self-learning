@@ -17,6 +17,7 @@ export default async function handler(
       id: string;
       description: string;
       amount: number;
+      documentId: string;
     } = req.body;
     if (!data) {
       res.status(400).json({ message: "Invalid input" });
@@ -28,6 +29,7 @@ export default async function handler(
         description: data.description,
         amount: data.amount,
         timeControl: { connect: { id: data.id } },
+        document: { connect: { id: data.documentId } },
       },
     });
 

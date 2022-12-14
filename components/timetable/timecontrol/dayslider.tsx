@@ -50,9 +50,18 @@ const DaySlider: React.FC<{ id: string; index: number }> = ({ id, index }) => {
     date = date.toString() + "th";
   }
 
-  const addNewSlider = (description: string, amount: number) => {
+  const addNewSlider = (
+    description: string,
+    amount: number,
+    documentId: string
+  ) => {
     dispatch(
-      createNewSlider({ id: id, description: description, amount: amount })
+      createNewSlider({
+        id: id,
+        description: description,
+        amount: amount,
+        documentId: documentId,
+      })
     );
   };
 

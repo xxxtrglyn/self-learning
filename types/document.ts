@@ -1,4 +1,5 @@
 import { Lesson } from "./lesson";
+import { TimeItem } from "./timeitem";
 
 export interface Document2 {
   id: string;
@@ -7,4 +8,5 @@ export interface Document2 {
   createdAt?: string;
   updatedAt?: string;
   lessons?: Lesson[];
+  timeitems?: TimeItem[];
 }

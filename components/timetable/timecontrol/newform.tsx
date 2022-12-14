@@ -6,6 +6,7 @@ import {
   Button,
   LoadingOverlay,
   NumberInput,
+  Select,
 } from "@mantine/core";
 import React from "react";
 import { RootState, useAppDispatch } from "../../../store";
@@ -53,7 +54,7 @@ const NewForm: React.FC<{ opened: boolean; onClose: () => void }> = (props) => {
         >
           <Stack>
             <Title order={2} weight={100} align="center">
-              Add new goal
+              New time
             </Title>
             <TextInput
               label="Title"
@@ -63,6 +64,7 @@ const NewForm: React.FC<{ opened: boolean; onClose: () => void }> = (props) => {
                 form.setFieldValue("title", event.currentTarget.value);
               }}
             />
+
             <DatePicker
               onChange={(value) => {
                 form.setFieldValue("time", value!);

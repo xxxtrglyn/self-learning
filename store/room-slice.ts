@@ -2,8 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 import { Room } from "../types/Room";
 import { createNewRoom, joinRoom } from "./room-actions";
 
-const initialState: { items: Room[] } = {
-  items: [],
+let emptyGoal: Room[] = [];
+
+const initialState: { items: Room[]; total: number } = {
+  items: emptyGoal,
+  total: 0,
 };
 
 const roomSlice = createSlice({
@@ -11,14 +14,18 @@ const roomSlice = createSlice({
   initialState: initialState,
   reducers: {
     replaceRoomList(state, action: { type: string; payload: Room[] }) {
-      return { ...state, items: action.payload };
+      if (action.payload.length > 0) {
+        state.items = action.payload;
+      }
     },
   },
   extraReducers(builder) {
     builder.addCase(
       createNewRoom.fulfilled,
       (state, action: { type: string; payload: Room }) => {
-        state.items.push(action.payload);
+        console.log(action.payload);
+
+        state.items.push({ ...action.payload });
       }
     );
     builder.addCase(

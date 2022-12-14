@@ -50,7 +50,11 @@ const TimeSlider: React.FC<{ value: TimeItem; color: string }> = ({
         </Text>
       </div>
       <NewSlider
-        value={{ description: value.description, amount: value.amount }}
+        value={{
+          description: value.description,
+          amount: value.amount,
+          documentId: value.documentId!,
+        }}
         opened={isShowUpdateForm}
         onClose={() => {
           setIsShowUpdateForm(false);

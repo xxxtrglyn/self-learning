@@ -128,7 +128,7 @@ const NavbarMinimal: React.FC<{ order?: number }> = ({ order }) => {
         if (link.label === "Document") {
           router.replace("/documents");
         }
-        if (link.label === "Document") {
+        if (link.label === "Analytics") {
           router.replace("/analytics");
         }
       }}

@@ -49,6 +49,8 @@ export default async function handler(
     const isUpdateLearnTime = req.query["learntime"];
     const data = req.body;
     if (isUpdateLearnTime) {
+      console.log(data.id);
+
       const result = await prisma.logTime.update({
         where: {
           userId_documentId: { userId: session.sub!, documentId: data.id },

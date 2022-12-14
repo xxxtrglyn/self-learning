@@ -54,6 +54,7 @@ const LogStudyTime: React.FC<{
                 learnTime: Math.floor(props.value / 60),
               })
             );
+            props.onClose();
             form.reset();
           })}
         >

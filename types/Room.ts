@@ -1,3 +1,5 @@
+import { JoinedRoom } from "@prisma/client";
+
 export interface Room {
   id: string;
   roomName: string;
@@ -6,4 +8,5 @@ export interface Room {
   admin: string;
   createdAt?: string;
   updatedAt?: string;
+  joinrooms?: JoinedRoom;
 }

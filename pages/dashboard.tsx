@@ -9,6 +9,7 @@ import { User } from "../types/user";
 import { useEffect } from "react";
 import HomePage from "../components/home/homepage";
 import { documentActions } from "../store/document-slice";
+import { timeActions } from "../store/time-slice";
 
 const Home: NextPage<{ isAuthenticated: boolean; info: User }> = ({
   isAuthenticated,
@@ -18,7 +19,8 @@ const Home: NextPage<{ isAuthenticated: boolean; info: User }> = ({
   const auth = useSelector((state: RootState) => state.auth);
   const dispatch = useAppDispatch();
   useEffect(() => {
-    dispatch(documentActions.replaceDocumentList(info.documents));
+    dispatch(documentActions.replaceDocumentList(info.documents!));
+    dispatch(timeActions.replaceTimeList(info.timecontrols!));
     dispatch(authActions.updateInfo(info));
   }, [dispatch, info]);
 
