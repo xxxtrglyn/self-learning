@@ -21,6 +21,7 @@ import { RootState, useAppDispatch } from "../../store";
 import { leaveRoom } from "../../store/room-actions";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
+import { BaseURL } from "../../lib/axiosinstance";
 
 let socket: Socket;
 
@@ -48,6 +49,7 @@ const ChatRoom: React.FC<{
   };
 
   useEffect(() => {
+    BaseURL.get("/api/socket");
     socket = io("https://self-learning-kappa.vercel.app", {
       path: "/api/socket",
     });
@@ -172,7 +174,7 @@ const ChatRoom: React.FC<{
         </Grid.Col>
       </Grid>
       <NewStudyCase
-        // onStart={startLearn}
+        onStart={startLearn}
         opened={isShowNewForm}
         onClose={() => {
           setIsShowNewForm(false);
