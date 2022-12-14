@@ -50,6 +50,7 @@ const ChatRoom: React.FC<{
   useEffect(() => {
     socket = io("https://self-learning-kappa.vercel.app", {
       path: "/api/socket",
+      transports: ["websocket"],
     });
     socket.on("newIncomingMessage", (msg: Message) => {
       setMessages((prev) => [...prev].concat(msg));
