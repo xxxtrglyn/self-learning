@@ -1,5 +1,5 @@
 import axios from "axios";
 
 export const BaseURL = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: "https://self-learning-kappa.vercel.app",
 });

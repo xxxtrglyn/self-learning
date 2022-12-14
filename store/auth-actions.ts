@@ -37,7 +37,9 @@ export const signInWithCredential = createAsyncThunk(
       password: user.password,
     });
     if (response!.ok) {
-      window.location.replace("http://localhost:3000/dashboard");
+      window.location.replace(
+        "https://self-learning-kappa.vercel.app/dashboard"
+      );
       return true;
     } else {
       return false;
@@ -45,7 +47,7 @@ export const signInWithCredential = createAsyncThunk(
   }
 );
 export const logout = createAsyncThunk("auth/signout", async () => {
-  signOut({ callbackUrl: "http://localhost:3000" });
+  signOut({ callbackUrl: "https://self-learning-kappa.vercel.app" });
   return true;
 });
 

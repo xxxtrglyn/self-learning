@@ -46,7 +46,7 @@ const ChatRoom: React.FC<{
   };
 
   useEffect(() => {
-    socket = io("http://localhost:3000", {
+    socket = io("https://self-learning-kappa.vercel.app", {
       path: "/api/socket",
     });
     socket.on("newIncomingMessage", (msg: Message) => {
