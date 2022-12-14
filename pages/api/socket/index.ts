@@ -14,11 +14,8 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponseServerIO
 ) {
-  console.log("run twice");
-
   if (!res.socket.server.io) {
     console.log("New Socket.io server...");
-    // adapt Next's net Server to http Server
     const httpServer: NetServer = res.socket.server as any;
     const io = new ServerIO(httpServer, {
       path: "/api/socket",
@@ -33,7 +30,6 @@ export default function handler(
       });
       MessageHandler(socket);
     });
-    // append SocketIO server to Next.js socket server response
 
     res.socket.server.io = io;
   }

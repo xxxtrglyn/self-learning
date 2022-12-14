@@ -40,6 +40,8 @@ const ChatRoom: React.FC<{
   const router = useRouter();
   const user = useSelector((state: RootState) => state.auth.info);
 
+  console.log(socket);
+
   const startLearn = (remainTime: number) => {
     socket.emit("setClock", remainTime, id);
     setTime(remainTime * 60);
