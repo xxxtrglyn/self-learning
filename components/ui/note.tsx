@@ -26,7 +26,7 @@ const Note: React.FC<{ values: Note[] | null | undefined }> = ({ values }) => {
   return (
     <Paper radius="md" withBorder className={classes.card}>
       <Text align="center" weight={700} className={classes.title} lineClamp={1}>
-        Study Note
+        Note
       </Text>
       <Text align="center" pt={10}>
         You has {values ? values.length : "no"}{" "}

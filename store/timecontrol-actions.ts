@@ -46,3 +46,28 @@ export const updateSlider = createAsyncThunk(
     }
   }
 );
+
+export const deleteSlider = createAsyncThunk(
+  "slider/delete",
+  async (id: string, thunkApi) => {
+    try {
+      const response = await BaseURL.delete(
+        `/api/daycontrol/timecontrol?id=${id}`
+      );
+      return response.data;
+    } catch (err: any) {
+      return thunkApi.rejectWithValue(err.response);
+    }
+  }
+);
+export const deleteTime = createAsyncThunk(
+  "time/delete",
+  async (id: string, thunkApi) => {
+    try {
+      const response = await BaseURL.delete(`/api/daycontrol?id=${id}`);
+      return response.data;
+    } catch (err: any) {
+      return thunkApi.rejectWithValue(err.response);
+    }
+  }
+);

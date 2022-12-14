@@ -4,10 +4,10 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import DaySlider from "./dayslider";
 
-const DayList = () => {
+const DayList: React.FC<{ isDelete: boolean }> = ({ isDelete }) => {
   const allTimeControl = useSelector((state: RootState) => state.time.items);
   const slide = allTimeControl?.map((item, index) => (
-    <DaySlider index={index} key={item.id} id={item.id} />
+    <DaySlider isDelete={isDelete} index={index} key={item.id} id={item.id} />
   ));
   const noSlide = (
     <Card radius="sm" shadow="sm" style={{ display: "inline-block" }}>

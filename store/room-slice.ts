@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Room } from "../types/Room";
-import { createNewRoom, joinRoom } from "./room-actions";
+import { createNewRoom, joinRoom, leaveRoom } from "./room-actions";
 
 let emptyGoal: Room[] = [];
 
@@ -34,6 +34,12 @@ const roomSlice = createSlice({
         state.items.push(action.payload!);
       }
     );
+    builder.addCase(leaveRoom.fulfilled, (state, action) => {
+      return {
+        ...state,
+        items: [...state.items].filter((note) => note.id !== action.payload),
+      };
+    });
   },
 });
 export const roomActions = roomSlice.actions;

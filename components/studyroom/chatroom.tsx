@@ -17,6 +17,10 @@ import NewStudyCase from "./newstudycase";
 import axios from "axios";
 import { FileWithPath } from "@mantine/dropzone";
 import LogStudyTime from "./logstudytime";
+import { RootState, useAppDispatch } from "../../store";
+import { leaveRoom } from "../../store/room-actions";
+import { useSelector } from "react-redux";
+import { useRouter } from "next/router";
 
 let socket: Socket;
 
@@ -32,7 +36,9 @@ const ChatRoom: React.FC<{
   const [logTime, setLogTime] = useState<number>(0);
   const [isShowLogForm, setIsShowLogForm] = useState<boolean>(false);
 
-  console.log(isShowLogForm);
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const user = useSelector((state: RootState) => state.auth.info);
 
   const startLearn = (remainTime: number) => {
     socket.emit("setClock", remainTime, id);
@@ -150,7 +156,13 @@ const ChatRoom: React.FC<{
               </Tooltip>
               <Tooltip label="Leave this room" offset={-15}>
                 <ActionIcon>
-                  <IconDoorExit style={{ cursor: "pointer" }} />
+                  <IconDoorExit
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      dispatch(leaveRoom({ userId: user?.id!, roomId: id }));
+                      router.replace("/studyroom");
+                    }}
+                  />
                 </ActionIcon>
               </Tooltip>
             </Group>

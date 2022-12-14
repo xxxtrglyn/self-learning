@@ -5,7 +5,10 @@ import TimeSlider from "./timeslider";
 import { IconPlus } from "@tabler/icons";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../../store";
-import { createNewSlider } from "../../../store/timecontrol-actions";
+import {
+  createNewSlider,
+  deleteTime,
+} from "../../../store/timecontrol-actions";
 import NewSlider from "./newslider";
 import { Color } from "../../../lib/color";
 
@@ -24,11 +27,15 @@ const monthNames = [
   "Dec",
 ];
 
-const DaySlider: React.FC<{ id: string; index: number }> = ({ id, index }) => {
+const DaySlider: React.FC<{ id: string; index: number; isDelete: boolean }> = ({
+  id,
+  index,
+  isDelete,
+}) => {
   const items = useSelector((state: RootState) =>
     state.time.items.find((timeitem) => timeitem.id === id)
   );
-  const [timeItem, setTimeItem] = useState<TimeItem[]>([]);
+
   const [isShowNewForm, setIsShowNewForm] = useState<boolean>(false);
   const dispatch = useAppDispatch();
 
@@ -70,7 +77,18 @@ const DaySlider: React.FC<{ id: string; index: number }> = ({ id, index }) => {
   ));
   return (
     <>
-      <Group spacing={5} my={10} mx={10}>
+      <Group
+        spacing={5}
+        my={10}
+        mx={10}
+        onClick={
+          isDelete
+            ? () => {
+                dispatch(deleteTime(id));
+              }
+            : () => {}
+        }
+      >
         <Card
           radius="sm"
           shadow="sm"

@@ -26,3 +26,15 @@ export const joinRoom = createAsyncThunk("room/join", async (room: Room) => {
     console.log("?");
   }
 });
+export const leaveRoom = createAsyncThunk(
+  "room/leave",
+  async (id: { userId: string; roomId: string }) => {
+    try {
+      const response = await BaseURL.patch("/api/rooms?leave=true", id);
+
+      return id.roomId;
+    } catch {
+      console.log("?");
+    }
+  }
+);

@@ -143,6 +143,7 @@ const ChatBox: React.FC<{
               } else {
                 if (files && !msg) {
                   onSendImage(files, user!);
+                  setFiles([]);
                 }
               }
             }}

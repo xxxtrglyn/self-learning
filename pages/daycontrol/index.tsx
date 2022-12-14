@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Badge, Container, Group, ScrollArea } from "@mantine/core";
+import { Badge, Container, Group, ScrollArea, Text } from "@mantine/core";
 import { GetServerSideProps, NextPage } from "next";
 import { getToken } from "next-auth/jwt";
 import React, { useEffect, useState } from "react";
@@ -16,6 +16,7 @@ const DayControl: NextPage<{ allTimeControl: TimeControl[] }> = ({
   allTimeControl,
 }) => {
   const [isShowNewForm, setIsShowNewForm] = useState<boolean>(false);
+  const [isDelete, setIsDelete] = useState<boolean>(false);
   const showNewFormHandler = () => {
     setIsShowNewForm(true);
   };
@@ -36,7 +37,12 @@ const DayControl: NextPage<{ allTimeControl: TimeControl[] }> = ({
             <Badge size="xl">Timetable</Badge>
           </Group>
           <ScrollArea style={{ height: "80vh" }}>
-            <DayList />
+            {isDelete && (
+              <Text weight={500} align="center" color="red">
+                Delete Mode
+              </Text>
+            )}
+            <DayList isDelete={isDelete} />
           </ScrollArea>
         </Container>
         <AddButton>
@@ -47,7 +53,13 @@ const DayControl: NextPage<{ allTimeControl: TimeControl[] }> = ({
           />
         </AddButton>
         <DeleteButton>
-          <IconCircleMinus size={60} color="red" />
+          <IconCircleMinus
+            size={60}
+            color="red"
+            onClick={() => {
+              setIsDelete((prev) => !prev);
+            }}
+          />
         </DeleteButton>
       </MainLayout>
       <NewForm opened={isShowNewForm} onClose={hideNewFormHandler} />

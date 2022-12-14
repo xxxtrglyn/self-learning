@@ -7,17 +7,26 @@ import {
   LoadingOverlay,
   NumberInput,
   Select,
+  Group,
+  ThemeIcon,
 } from "@mantine/core";
 import React from "react";
-import { RootState } from "../../../store";
+import { RootState, useAppDispatch } from "../../../store";
 import { useForm } from "@mantine/form";
 import { useSelector } from "react-redux";
+import { IconTrash } from "@tabler/icons";
+import { deleteSlider } from "../../../store/timecontrol-actions";
 
 const NewSlider: React.FC<{
   opened: boolean;
   onClose: () => void;
   onAdd: (description: string, amount: number, documentId: string) => void;
-  value?: { description: string; amount: number; documentId: string };
+  value?: {
+    id: string;
+    description: string;
+    amount: number;
+    documentId: string;
+  };
 }> = (props) => {
   const documents = useSelector((state: RootState) => state.document.items);
   const dataSelect = documents.map((doc) => ({
@@ -48,6 +57,7 @@ const NewSlider: React.FC<{
   });
 
   const loading = useSelector((state: RootState) => state.ui.loaderOverlay);
+  const dispatch = useAppDispatch();
 
   return (
     <>
@@ -69,9 +79,24 @@ const NewSlider: React.FC<{
           })}
         >
           <Stack>
-            <Title order={2} weight={100} align="center">
-              Add
-            </Title>
+            <Group position="center">
+              <Title order={2} weight={100} align="center">
+                Add
+              </Title>
+              {props.value && (
+                <ThemeIcon
+                  radius="xl"
+                  color="red"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    props.onClose();
+                    dispatch(deleteSlider(props.value!.id));
+                  }}
+                >
+                  <IconTrash />
+                </ThemeIcon>
+              )}
+            </Group>
             <TextInput
               label="Title"
               placeholder="Enter title here"

@@ -78,5 +78,23 @@ export default async function handler(
         res.status(404).json({ message: "error" });
       }
     }
+
+    const isLeave = req.query.leave;
+    if (isLeave) {
+      const { userId, roomId } = req.body;
+      console.log(userId);
+
+      const result = await prisma.joinedRoom.delete({
+        where: {
+          userId_roomId: { userId: userId, roomId: roomId },
+        },
+      });
+      if (result) {
+        res.status(201).json(result);
+        return;
+      } else {
+        res.status(404).json({ message: "error" });
+      }
+    }
   }
 }

@@ -51,6 +51,7 @@ const TimeSlider: React.FC<{ value: TimeItem; color: string }> = ({
       </div>
       <NewSlider
         value={{
+          id: value.id,
           description: value.description,
           amount: value.amount,
           documentId: value.documentId!,

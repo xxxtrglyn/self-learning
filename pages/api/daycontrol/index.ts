@@ -23,4 +23,14 @@ export default async function handler(
     });
     res.status(201).json(result);
   }
+
+  if (req.method === "DELETE") {
+    const id = req.query["id"] as string;
+    const result = await prisma.timeControl.delete({ where: { id: id } });
+    if (!result) {
+      res.status(401).json({ message: "delete error" });
+    } else {
+      res.status(200).json(result);
+    }
+  }
 }

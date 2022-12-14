@@ -48,6 +48,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const transformMessages: Message[] = messages.map((message) => ({
     id: message.id,
+    type: "normal",
     user: {
       id: message.user.id,
       fullname: message.user.fullname,
@@ -58,6 +59,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         : null,
       phone: message.user.phone ? message.user.phone : null,
       job: message.user.job ? message.user.job : null,
+      role: message.user.role,
     },
     content: message.content,
   }));
@@ -75,6 +77,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     dob: user.dob?.toISOString() ? user.dob.toISOString() : null,
     phone: user.phone ? user.phone : null,
     job: user.job ? user.job : null,
+    role: user.role!,
   }));
 
   return {
