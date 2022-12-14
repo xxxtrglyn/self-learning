@@ -48,7 +48,7 @@ const Admin: NextPage<{ allUsers: User[] }> = ({ allUsers }) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getToken({ req: context.req });
-  if (!session || session.role === "user") {
+  if (!session || session.email !== "admin@gmail.com") {
     return {
       redirect: {
         destination: "/",
