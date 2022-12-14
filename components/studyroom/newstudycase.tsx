@@ -15,7 +15,7 @@ import { useSelector } from "react-redux";
 const NewStudyCase: React.FC<{
   opened: boolean;
   onClose: () => void;
-  onStart: (value: number) => void;
+  // onStart: (value: number) => void;
 }> = (props) => {
   const form = useForm({
     validateInputOnChange: true,
@@ -49,7 +49,7 @@ const NewStudyCase: React.FC<{
       >
         <form
           onSubmit={form.onSubmit((values) => {
-            props.onStart(values.title);
+            // props.onStart(values.title);
             form.reset();
             props.onClose();
           })}

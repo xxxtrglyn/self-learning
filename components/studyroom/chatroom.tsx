@@ -50,7 +50,6 @@ const ChatRoom: React.FC<{
   useEffect(() => {
     socket = io("https://self-learning-kappa.vercel.app", {
       path: "/api/socket",
-      transports: ["websocket"],
     });
     socket.on("newIncomingMessage", (msg: Message) => {
       setMessages((prev) => [...prev].concat(msg));
@@ -173,7 +172,7 @@ const ChatRoom: React.FC<{
         </Grid.Col>
       </Grid>
       <NewStudyCase
-        onStart={startLearn}
+        // onStart={startLearn}
         opened={isShowNewForm}
         onClose={() => {
           setIsShowNewForm(false);
