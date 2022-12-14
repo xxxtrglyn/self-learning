@@ -249,6 +249,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     job: user?.job!,
     createdAt: user?.createdAt!.toISOString(),
     updatedAt: user?.updatedAt!.toISOString(),
+    role: user?.role!,
   };
   return {
     props: {
